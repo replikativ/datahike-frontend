@@ -1,0 +1,36 @@
+#+TITLE:   About the petit-bistrot in Fulcro project
+#+DATE:    April 16, 2020
+#+SINCE:   {replace with next tagged release version}
+#+STARTUP: inlineimages nofold
+
+* Table of Contents :TOC_3:noexport:
+- [[#quick-start][Quick start]]
+- [[#todolist][TODOLiST]]
+  - [[#need-to-restore-the-server-code-and-its-config][Need to restore the server code and its config]]
+  - [[#change-the-renderer-to-what-they-suggest-in-the-slack-channel][Change the renderer to what they suggest in the slack channel]]
+  - [[#deploy-to-see-whether-css-works][Deploy! To see whether css works.]]
+  - [[#make-login-work-first-watch-video-about-session-on-fulcro][Make login work (first watch video about session on fulcro)]]
+  - [[#fix-the-look][Fix the look]]
+  - [[#make-backend-work][Make backend work]]
+    - [[#use-datomic-as-backend][Use datomic as backend]]
+    - [[#make-the-beckend-frontend-communication-work][Make the beckend-frontend communication work]]
+
+* Quick start
+
+
+* TODOLiST
+
+** Need to restore the server code and its config
+** Change the renderer to what they suggest in the slack channel
+
+** [#C] Deploy! To see whether css works.
+
+** [#A] Make login work (first watch video about session on fulcro)
+** Fix the look
+
+
+** Make backend work
+
+*** Use datomic as backend
+
+*** Make the beckend-frontend communication work
