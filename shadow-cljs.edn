@@ -7,7 +7,7 @@
                        :modules    {:main {:init-fn app.client/init
                                            :entries [app.client]}}
                        ;; guardrails checks only during dev
-                       :dev        {:compiler-options
+                       :dev        {:Compiler-options
                                     {:external-config {:guardrails {}}}}
 
                        :devtools   {:after-load app.client/refresh

@@ -5,6 +5,8 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#quick-start][Quick start]]
+  - [[#server-ie-clj-side][SERVER, i.e. Clj side]]
+  - [[#client-cljs][CLIENT, cljs]]
 - [[#todolist][TODOLiST]]
   - [[#need-to-restore-the-server-code-and-its-config][Need to restore the server code and its config]]
   - [[#change-the-renderer-to-what-they-suggest-in-the-slack-channel][Change the renderer to what they suggest in the slack channel]]
@@ -16,6 +18,22 @@
     - [[#make-the-beckend-frontend-communication-work][Make the beckend-frontend communication work]]
 
 * Quick start
+** SERVER, i.e. Clj side
+- clj -A:dev:cider-clj -J-Dtrace -J-Dghostwheel.enabled=true
+- then in emacs in the project:
+  - cider-connect | localhost | <the port it suggests>
+  - in the repl: user> (start)
+  - in the browser: localhost3000/index.html   (the index.html is important)
+  - If restart needed after compilation pblm:
+    - (tools-ns/refresh)
+    - (start)
+** CLIENT, cljs
+- cider-jack-in-cljs
+  - (This will execute: - npx shadow-cljs server) (Use this rather on IntelliJ)
+  - Always choose options related to 'shadow'
+- You might need to compile the js code here: http://localhost:9630
+- The http server is here: http://localhost:8000/
+- The nrepl is server in port 9000
 
 
 * TODOLiST
