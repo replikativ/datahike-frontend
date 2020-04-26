@@ -44,24 +44,44 @@
         :content "width=device-width, initial-scale=1, shrink-to-fit=no"}]
       [:meta {:name "description", :content ""}]
       [:meta {:name "author", :content ""}]
-      [:link {:rel "shortcut icon" :href "data:image/x-icon;," :type "image/x-icon"}]
-      [:script (str "var fulcro_network_csrf_token = '" csrf-token "';")]
-      [:title {} "Restaurant Le Petit-Bistrot"]
+      [:link {:rel "shortcut icon" :href "data:image/x-icon;" :type "image/x-icon"}]
       [:link
-       {:href "vendor/bootstrap/css/bootstrap.min.css", :rel "stylesheet"}]
-      [:link {:href "vendor/fontawesome-free/css/all.min.css", :rel "stylesheet", :type "text/css"}]
-      [:link {:href "https://fonts.googleapis.com/css?family=Montserrat:400,700", :rel "stylesheet",
-              :type "text/css"}]
-      [:link {:href "https://fonts.googleapis.com/css?family=Kaushan+Script",
-              :rel "stylesheet", :type "text/css"}]
-      [:link {:href "https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic",
-              :rel "stylesheet", :type "text/css"}]
-      [:link {:href "https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700",
-              :rel "stylesheet", :type "text/css"}]
-      [:link {:href "css/agency.min.css", :rel "stylesheet"}]]
+       {:rel "stylesheet",
+        :href
+        "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css",
+        :integrity
+        "sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO",
+        :crossorigin "anonymous"}]
+      ;; [:link
+      ;;  {:rel         "stylesheet"
+      ;;   :href        "https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      ;;   :integrity   "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      ;;   :crossorigin "anonymous"}]
+      [:script (str "var fulcro_network_csrf_token = '" csrf-token "';")]
+      [:title {} "Datahike Dashboard"]]
      [:body
       [:div#app]
-      [:script {:src "js/main/main.js"}]]]))
+      [:script {:src "js/main/main.js"}]
+
+      [:div
+       [:script
+        {:src "https://code.jquery.com/jquery-3.3.1.slim.min.js",
+         :integrity
+         "sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo",
+         :crossorigin "anonymous"}]
+       [:script
+        {:src
+         "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js",
+         :integrity
+         "sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49",
+         :crossorigin "anonymous"}]
+       [:script
+        {:src
+         "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js",
+         :integrity
+         "sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy",
+         :crossorigin "anonymous"}]]
+      ]]))
 
 
 

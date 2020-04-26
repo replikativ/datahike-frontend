@@ -16,6 +16,10 @@
   - [[#make-backend-work][Make backend work]]
     - [[#use-datomic-as-backend][Use datomic as backend]]
     - [[#make-the-beckend-frontend-communication-work][Make the beckend-frontend communication work]]
+- [[#refs][Refs]]
+  - [[#fulcro-with-react-high-order-component-hoc][fulcro with React high order component (HOC):]]
+- [[#potential-issues][Potential issues?]]
+  - [[#i-have-upgrade-the-react-verision][I have upgrade the react verision]]
 
 * Quick start
 ** SERVER, i.e. Clj side
@@ -52,3 +56,16 @@
 *** Use datomic as backend
 
 *** Make the beckend-frontend communication work
+
+* Refs
+
+** fulcro with React high order component (HOC):
+http://book.fulcrologic.com/#_fulcro_and_react_hoc
+
+* Potential issues?
+
+** I have upgrade the react verision
+-        "react": "^16.6.8",
+-        "react-dom": "^16.6.8",
++        "react": "^16.13.1",
++        "react-dom": "^16.13.1",

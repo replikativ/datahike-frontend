@@ -15,7 +15,10 @@
     [com.fulcrologic.fulcro.algorithms.merge :as merge]
     [com.fulcrologic.fulcro-css.css :as css]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
-    [taoensso.timbre :as log]))
+    [taoensso.timbre :as log]
+;;    ["reactstrap" :as rs :refer [Alert Button]]
+    ;;["react-bootstrap" :as rs :refer [Alert Button]]
+    ))
 
 
 
@@ -143,8 +146,9 @@
                                           (comp/get-initial-state DayMenu {:id 2 :day "Tuesday" :starter "Crevettes"})
                                           ]})}
   (dom/div
-    (dom/h2 "Menu starts here: ")
-
+    (dom/h2 "Menu startsss here: ")
+    ;;(Button "bager")
+;;    (Alert {:color "primary" :value "Alertaaa"})
     (dom/h1 week-desc)
     ;;(println (str "menes: " menus)) ;; <- would work but the component view would not appear
     (map ui-day-menu day-menu-list)))
