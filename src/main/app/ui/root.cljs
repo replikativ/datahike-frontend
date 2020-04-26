@@ -2,7 +2,7 @@
   (:require
     [app.model.session :as session]
     [clojure.string :as str]
-    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b]]
+    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
     [com.fulcrologic.fulcro.dom.events :as evt]
     [com.fulcrologic.fulcro.application :as app]
@@ -135,13 +135,28 @@
 
 (def ui-login (comp/factory Login))
 
-(defsc Schema [this props]
-  {:query         [:schema/welcome-message]
-   :initial-state {:schema/welcome-message "Hi!"}
+(defsc Schema [this {:schema/keys [ident value-type] :as props}]
+  {:query         [:schema/ident :schema/value-type]
+   :initial-state (fn [_] {:schema/ident      ":team/name"
+                           :schema/value-type ":db.type/string"})
    :ident         (fn [] [:component/id :schema])
    :route-segment ["schema"]}
-  (div :.ui.container.segment
-    (h3 "Schema")))
+  (table :.ui.cell.table
+    (thead
+      (tr
+        (th "ident")
+        (th "valueType")
+        (th "cardinality")
+        (th "doc")
+        (th "index")
+        (th "unique")
+        (th "noHistory")
+        (th "isComponent")))
+    (tbody
+      (tr
+        (td ident)
+        (td value-type)
+        ))))
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
   {:query         [:account/time-zone :account/real-name]
@@ -171,15 +186,19 @@
 
 (def ui-session (comp/factory Session))
 
-(defsc TopChrome [this {:root/keys [router current-session login]}]
+(defsc TopChrome [this {:root/keys [router current-session login schema]}]
   {:query         [{:root/router (comp/get-query TopRouter)}
                    {:root/current-session (comp/get-query Session)}
                    [::uism/asm-id ::TopRouter]
-                   {:root/login (comp/get-query Login)}]
+                   {:root/login (comp/get-query Login)}
+                   {:root/schema (comp/get-query Schema)}
+                   ]
    :ident         (fn [] [:component/id :top-chrome])
    :initial-state {:root/router          {}
                    :root/login           {}
-                   :root/current-session {}}}
+                   :root/current-session {}
+                   :root/schema          {}                 ;; (comp/get-initial-state Schema)
+                   }}
   (let [current-tab (some-> (dr/current-route this this) first keyword)]
     (div :.ui.container
       (div :.ui.secondary.pointing.menu
@@ -190,9 +209,10 @@
         (div :.right.menu
           (ui-login login)))
       (div :.ui.grid
-        (div :.three.wide.column
-          (ui-top-router router))
-        (div :.thirteen.wide.column
+        (div :.two.wide.column
+          (div "Transactions")
+          (div "Schema"))
+        (div :.fourteen.wide.column
           (ui-top-router router))))))
 
 (def ui-top-chrome (comp/factory TopChrome))
