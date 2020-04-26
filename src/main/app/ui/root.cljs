@@ -190,7 +190,9 @@
         (div :.right.menu
           (ui-login login)))
       (div :.ui.grid
-        (div :.ui.row
+        (div :.three.wide.column
+          (ui-top-router router))
+        (div :.thirteen.wide.column
           (ui-top-router router))))))
 
 (def ui-top-chrome (comp/factory TopChrome))
