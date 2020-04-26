@@ -135,13 +135,13 @@
 
 (def ui-login (comp/factory Login))
 
-(defsc Main [this props]
-  {:query         [:main/welcome-message]
-   :initial-state {:main/welcome-message "Hi!"}
-   :ident         (fn [] [:component/id :main])
-   :route-segment ["main"]}
+(defsc Schema [this props]
+  {:query         [:schema/welcome-message]
+   :initial-state {:schema/welcome-message "Hi!"}
+   :ident         (fn [] [:component/id :schema])
+   :route-segment ["schema"]}
   (div :.ui.container.segment
-    (h3 "Main")))
+    (h3 "Schema")))
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
   {:query         [:account/time-zone :account/real-name]
@@ -155,7 +155,7 @@
         (p (b "Time Zone: ") time-zone))))
 
 (dr/defrouter TopRouter [this props]
-  {:router-targets [Main Signup SignupSuccess Settings]})
+  {:router-targets [Schema Signup SignupSuccess Settings]})
 
 (def ui-top-router (comp/factory TopRouter))
 
@@ -183,8 +183,8 @@
   (let [current-tab (some-> (dr/current-route this this) first keyword)]
     (div :.ui.container
       (div :.ui.secondary.pointing.menu
-        (dom/a :.item {:classes [(when (= :main current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["main"]))} "Main")
+        (dom/a :.item {:classes [(when (= :schema current-tab) "active")]
+                       :onClick (fn [] (dr/change-route this ["schema"]))} "Schema")
         (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
                        :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
         (div :.right.menu
