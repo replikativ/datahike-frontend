@@ -154,9 +154,9 @@
         (th "isComponent")))
     (tbody
       (map #(tr
-              (td (str (:schema/ident %)))
-              (td (str (:schema/value-type %))))
-        elements))))
+              (td (str (:db/ident %)))
+              (td (str (:db/valueType %))))
+           elements))))
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
   {:query         [:account/time-zone :account/real-name]
