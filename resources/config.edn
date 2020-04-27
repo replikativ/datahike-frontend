@@ -1,5 +1,5 @@
 {:store {:backend :file
-         :path "/tmp/dh-2"}
+         :path "/Users/chrislain/temp/events-db-5"}
  :server {:port  3000
           :join? false}
  :schema-on-read true
