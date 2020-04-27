@@ -8,15 +8,9 @@
   - [[#server-ie-clj-side][SERVER, i.e. Clj side]]
   - [[#client-cljs][CLIENT, cljs]]
 - [[#list][LIST]]
+  - [[#see-if-the-dh-db-i-am-using-is-corrupted-when-showing-datoms-try-to-show-datoms-on-another-db][See if the dh db I am using is corrupted when showing datoms. Try to show datoms on another db.]]
   - [[#how-to-return-the-schema-data-fully-at-once][How to return the schema data fully at once]]
-  - [[#need-to-restore-the-server-code-and-its-config][Need to restore the server code and its config]]
   - [[#change-the-renderer-to-what-they-suggest-in-the-slack-channel][Change the renderer to what they suggest in the slack channel]]
-  - [[#deploy-to-see-whether-css-works][Deploy! To see whether css works.]]
-  - [[#make-login-work-first-watch-video-about-session-on-fulcro][Make login work (first watch video about session on fulcro)]]
-  - [[#fix-the-look][Fix the look]]
-  - [[#make-backend-work][Make backend work]]
-    - [[#use-datomic-as-backend][Use datomic as backend]]
-    - [[#make-the-beckend-frontend-communication-work][Make the beckend-frontend communication work]]
 - [[#refs][Refs]]
   - [[#fulcro-with-react-high-order-component-hoc][fulcro with React high order component (HOC):]]
 - [[#learned][Learned]]
@@ -43,33 +37,10 @@
 
 
 * TODO LIST
+** See if the dh db I am using is corrupted when showing datoms. Try to show datoms on another db.
+** DONE How to return the schema data fully at once
 
-** How to return the schema data fully at once
-An idea: a bit like here but instead of doing a join on :person/id at (1), just return all the fields we want
-#+BEGIN_SRC clojure
-(pc/defresolver list-resolver [env {:list/keys [id]}]
-  {::pc/input  #{:list/id}
-   ::pc/output [:list/label {:list/people [:person/id]}]}   ;; (1)
-  (when-let [list (get list-table id)]
-    (assoc list
-      :list/people (mapv (fn [id] {:person/id id}) (:list/people list)))))
-#+END_SRC
-
-** Need to restore the server code and its config
-
-** Change the renderer to what they suggest in the slack channel
-
-** [#C] Deploy! To see whether css works.
-
-** [#A] Make login work (first watch video about session on fulcro)
-** Fix the look
-
-
-** Make backend work
-
-*** Use datomic as backend
-
-*** Make the beckend-frontend communication work
+** TODO [#A] Change the renderer to what they suggest in the slack channel
 
 * Refs
 
