@@ -135,11 +135,11 @@
 
 (def ui-login (comp/factory Login))
 
-(defsc Schema [this {:schema/keys [ident value-type] :as props}]
-  {:query         [:schema/ident :schema/value-type]
+(defsc Schema [this {:schema/keys [id] :as props}]
+  {:query [:schema/id]
    :initial-state (fn [_] {:schema/ident      ":team/name"
                            :schema/value-type ":db.type/string"})
-   :ident         (fn [] [:component/id :schema])
+   :ident         (fn [] [:schema/id :the-schema])
    :route-segment ["schema"]}
   (table :.ui.cell.table
     (thead
@@ -154,8 +154,8 @@
         (th "isComponent")))
     (tbody
       (tr
-        (td ident)
-        (td value-type)
+        ;; (td ident)
+        ;; (td value-type)
         ))))
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
@@ -186,19 +186,17 @@
 
 (def ui-session (comp/factory Session))
 
-(defsc TopChrome [this {:root/keys [router current-session login schema]}]
+(defsc TopChrome [this {:root/keys [router current-session login]}]
   {:query         [{:root/router (comp/get-query TopRouter)}
                    {:root/current-session (comp/get-query Session)}
                    [::uism/asm-id ::TopRouter]
                    {:root/login (comp/get-query Login)}
-                   {:root/schema (comp/get-query Schema)}
+                   {:the-schema (comp/get-query Schema)}
                    ]
    :ident         (fn [] [:component/id :top-chrome])
    :initial-state {:root/router          {}
                    :root/login           {}
-                   :root/current-session {}
-                   :root/schema          {}                 ;; (comp/get-initial-state Schema)
-                   }}
+                   :root/current-session {}}}
   (let [current-tab (some-> (dr/current-route this this) first keyword)]
     (div :.ui.container
       (div :.ui.secondary.pointing.menu
