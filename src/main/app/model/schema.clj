@@ -6,15 +6,12 @@
 
 
 (defresolver schema-resolver [env input]
-  ;; {::pc/output [{:datahike/schema [:schema/ident
-  ;;                                  :schema/value-type]}]}
   {::pc/output [{:the-schema [:schema/id :schema/elements]}]}
   {:the-schema {:schema/id       :the-schema
                 :schema/elements [{:schema/ident       ":event/name"
                                    :schema/value-type  ":db.type/string"}
                                   {:schema/ident       ":player/name"
                                    :schema/value-type  ":db.type/string"}]}})
-
 
 
 (def resolvers [schema-resolver])
