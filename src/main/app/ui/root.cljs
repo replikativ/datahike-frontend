@@ -135,10 +135,10 @@
 
 (def ui-login (comp/factory Login))
 
-(defsc Schema [this {:schema/keys [id] :as props}]
-  {:query [:schema/id]
-   :initial-state (fn [_] {:schema/ident      ":team/name"
-                           :schema/value-type ":db.type/string"})
+(defsc Schema [this {:schema/keys [id elements] :as props}]
+  {:query [:schema/id :schema/elements]
+   :initial-state (fn [_] {:schema/id      ":init-state"
+                           :schema/elements {}})
    :ident         (fn [] [:schema/id :the-schema])
    :route-segment ["schema"]}
   (table :.ui.cell.table
@@ -154,8 +154,8 @@
         (th "isComponent")))
     (tbody
       (tr
-        ;; (td ident)
-        ;; (td value-type)
+        (td (str id))
+        (td (str elements))
         ))))
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
