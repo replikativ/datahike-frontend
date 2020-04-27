@@ -18,6 +18,7 @@
 
            ;; To simulate Datomic on the back-end
            datascript                          {:mvn/version "0.18.4"}
+           io.replikativ/datahike              {:mvn/version "0.2.2-SNAPSHOT"}
 
            ring/ring-core                      {:mvn/version "1.7.1"}
            ring/ring-defaults                  {:mvn/version "0.3.2"}}
