@@ -156,7 +156,9 @@
       (map #(tr
               (td (str (:db/ident %)))
               (td (str (:db/valueType %))))
-           elements))))
+        elements))))
+
+(def ui-schema (comp/factory Schema))
 
 
 (defsc Main [this props]
@@ -164,8 +166,14 @@
    :initial-state {:main/welcome-message "Hi!"}
    :ident         (fn [] [:component/id :main])
    :route-segment ["main"]}
-  (div :.ui.container.segment
-    (h3 "Main")))
+  (div :.ui.grid
+    (div :.three.wide.column
+      (div :.ui.container.segment
+        (div "Transactions")
+        (div "Schema")))
+    (div :.thirteen.wide.column
+      (div :.ui.container.segment
+        (ui-schema)))))
 
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
@@ -211,16 +219,13 @@
     (div :.ui.container
       (div :.ui.secondary.pointing.menu
         (dom/a :.item {:classes [(when (= :main current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["main"]))} "Main")
+                       :onClick (fn [] (dr/change-route this ["main"]))} "Dashboard")
         (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
                        :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
         (div :.right.menu
           (ui-login login)))
       (div :.ui.grid
-        (div :.two.wide.column
-          (div "Transactions")
-          (div "Schema"))
-        (div :.fourteen.wide.column
+        (div :.ui.row
           (ui-top-router router))))))
 
 (def ui-top-chrome (comp/factory TopChrome))
