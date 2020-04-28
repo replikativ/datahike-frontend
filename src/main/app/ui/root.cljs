@@ -135,12 +135,40 @@
 
 (def ui-login (comp/factory Login))
 
+
+(defsc Datoms [this {:datoms/keys [id elements] :as props}]
+  {:query [:datoms/id :datoms/elements]
+   :initial-state (fn [_] {:datoms/id      ":init-state"
+                           :datoms/elements {}})
+   :ident         (fn [] [:datoms/id :the-datoms])
+   :route-segment ["main" "datoms"]}
+  (table :.ui.cell.table
+    (thead
+      (tr
+        (th "=== DATOMS =====")
+        ;; (th "valueType")
+        ;; (th "cardinality")
+        ;; (th "doc")
+        ;; (th "index")
+        ;; (th "unique")
+        ;; (th "noHistory")
+        (th "isComponent")))
+    (tbody
+      (map #(tr
+              (td (str (:db/ident %)))
+              (td (str (:db/valueType %))))
+        elements))))
+
+(def ui-datoms (comp/factory Datoms))
+
+
+
 (defsc Schema [this {:schema/keys [id elements] :as props}]
   {:query [:schema/id :schema/elements]
    :initial-state (fn [_] {:schema/id      ":init-state"
                            :schema/elements {}})
    :ident         (fn [] [:schema/id :the-schema])
-   :route-segment ["schema"]}
+   :route-segment ["main" "schema"]}
   (table :.ui.cell.table
     (thead
       (tr
@@ -161,19 +189,35 @@
 (def ui-schema (comp/factory Schema))
 
 
-(defsc Main [this props]
-  {:query         [:main/welcome-message]
-   :initial-state {:main/welcome-message "Hi!"}
+(dr/defrouter MainRouter [this props]
+  {:router-targets [Datoms Schema]})
+
+(def ui-main-router (comp/factory MainRouter))
+
+
+(defsc Main [this {:main/keys [router]}]
+  {:query         [{:main/router (comp/get-query MainRouter)}
+                   ]
+   :initial-state {:main/router {}}
    :ident         (fn [] [:component/id :main])
    :route-segment ["main"]}
-  (div :.ui.grid
-    (div :.three.wide.column
-      (div :.ui.container.segment
-        (div "Transactions")
-        (div "Schema")))
-    (div :.thirteen.wide.column
-      (div :.ui.container.segment
-        (ui-schema)))))
+  (let [current-panel (some-> (dr/current-route this this) first keyword)]
+    (div :.ui.grid
+      (div :.three.wide.column
+        (div :.ui.container.segment
+          (div "Transactions")
+          (div "Queries")
+          (div (dom/a :.item {:classes [(when (= :datoms current-panel) "active")]
+                              :onClick (fn [] (dr/change-route this ["main" "datoms"]))} "Datoms"))
+          (div (dom/a :.item {:classes [(when (= :schema current-panel) "active")]
+                              :onClick (fn []
+                                         (println "Changing routeüüüü:   " (dr/current-route this this))
+                                         (dr/change-route this ["main" "schema"]))} "Schema"))
+          ))
+      (div :.thirteen.wide.column
+        (div :.ui.container.segment
+          (ui-main-router router)
+          )))))
 
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
@@ -188,7 +232,7 @@
         (p (b "Time Zone: ") time-zone))))
 
 (dr/defrouter TopRouter [this props]
-  {:router-targets [Main Schema Signup SignupSuccess Settings]})
+  {:router-targets [Main Signup SignupSuccess Settings]})
 
 (def ui-top-router (comp/factory TopRouter))
 
@@ -219,9 +263,13 @@
     (div :.ui.container
       (div :.ui.secondary.pointing.menu
         (dom/a :.item {:classes [(when (= :main current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["main"]))} "Dashboard")
+                       :onClick (fn []
+                                  (println "Current route in TopChrome:   " (dr/current-route this this))
+                                  (dr/change-route this ["main"]))} "Dashboard")
         (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
+                       :onClick (fn []
+                                  (println "Current route in TopChrome:   " (dr/current-route this this))
+                                  (dr/change-route this ["settings"]))} "Settings")
         (div :.right.menu
           (ui-login login)))
       (div :.ui.grid
