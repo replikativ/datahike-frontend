@@ -138,25 +138,21 @@
 
 (defsc Datoms [this {:datoms/keys [id elements] :as props}]
   {:query [:datoms/id :datoms/elements]
-   :initial-state (fn [_] {:datoms/id      ":init-state"
+   :initial-state (fn [_] {:datoms/id      ":datoms-init-state"
                            :datoms/elements {}})
    :ident         (fn [] [:datoms/id :the-datoms])
-   :route-segment ["main" "datoms"]}
+   :route-segment ["datoms"]}
   (table :.ui.cell.table
     (thead
       (tr
-        (th "=== DATOMS =====")
-        ;; (th "valueType")
-        ;; (th "cardinality")
-        ;; (th "doc")
-        ;; (th "index")
-        ;; (th "unique")
-        ;; (th "noHistory")
-        (th "isComponent")))
+        (th "entity id")
+        (th "attributes")
+        (th "value")
+        (th "tr. id")
+        (th "added")))
     (tbody
       (map #(tr
-              (td (str (:db/ident %)))
-              (td (str (:db/valueType %))))
+              (map (fn [el] (td (str el))) %))
         elements))))
 
 (def ui-datoms (comp/factory Datoms))
@@ -168,7 +164,7 @@
    :initial-state (fn [_] {:schema/id      ":init-state"
                            :schema/elements {}})
    :ident         (fn [] [:schema/id :the-schema])
-   :route-segment ["main" "schema"]}
+   :route-segment ["schema"]}
   (table :.ui.cell.table
     (thead
       (tr
@@ -211,8 +207,7 @@
                               :onClick (fn [] (dr/change-route this ["main" "datoms"]))} "Datoms"))
           (div (dom/a :.item {:classes [(when (= :schema current-panel) "active")]
                               :onClick (fn []
-                                         (println "Changing routeüüüü:   " (dr/current-route this this))
-                                         (dr/change-route this ["main" "schema"]))} "Schema"))
+                                         (dr/change-route! this ["main" "schema"]))} "Schema"))
           ))
       (div :.thirteen.wide.column
         (div :.ui.container.segment
@@ -264,11 +259,9 @@
       (div :.ui.secondary.pointing.menu
         (dom/a :.item {:classes [(when (= :main current-tab) "active")]
                        :onClick (fn []
-                                  (println "Current route in TopChrome:   " (dr/current-route this this))
                                   (dr/change-route this ["main"]))} "Dashboard")
         (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
                        :onClick (fn []
-                                  (println "Current route in TopChrome:   " (dr/current-route this this))
                                   (dr/change-route this ["settings"]))} "Settings")
         (div :.right.menu
           (ui-login login)))

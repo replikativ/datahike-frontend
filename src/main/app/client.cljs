@@ -31,7 +31,8 @@
     {:actor/login-form      root/Login
      :actor/current-session root/Session})
   (app/mount! SPA root/Root "app" {:initialize-state? false})
-  (df/load! SPA :the-schema root/Schema))
+  (df/load! SPA :the-schema root/Schema)
+  (df/load! SPA :the-datoms root/Datoms))
 
 (comment
   (inspect/app-started! SPA)
