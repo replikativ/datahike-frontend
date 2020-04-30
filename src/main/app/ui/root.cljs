@@ -136,6 +136,30 @@
 
 (def ui-login (comp/factory Login))
 
+
+(defsc Datoms [this {:datoms/keys [id elements] :as props}]
+  {:query [:datoms/id :datoms/elements]
+   :initial-state (fn [_] {:datoms/id      ":datoms-init-state"
+                           :datoms/elements {}})
+   :ident         (fn [] [:datoms/id :the-datoms])
+   :route-segment ["datoms"]}
+  (table :.ui.cell.table
+    (thead
+      (tr
+        (th "entity id")
+        (th "attributes")
+        (th "value")
+        (th "tr. id")
+        (th "added")))
+    (tbody
+      (map #(tr
+              (map (fn [el] (td (str el))) %))
+        elements))))
+
+(def ui-datoms (comp/factory Datoms))
+
+
+
 (defsc Schema [this {:schema/keys [id elements] :as props}]
   {:query [:schema/id :schema/elements]
    :initial-state (fn [_] {:schema/id      ":init-state"
@@ -155,9 +179,42 @@
         (th "isComponent")))
     (tbody
       (map #(tr
-              (td (str (:schema/ident %)))
-              (td (str (:schema/value-type %))))
+              (td (str (:db/ident %)))
+              (td (str (:db/valueType %))))
         elements))))
+
+(def ui-schema (comp/factory Schema))
+
+
+(dr/defrouter MainRouter [this props]
+  {:router-targets [Datoms Schema]})
+
+(def ui-main-router (comp/factory MainRouter))
+
+
+(defsc Main [this {:main/keys [router]}]
+  {:query         [{:main/router (comp/get-query MainRouter)}
+                   ]
+   :initial-state {:main/router {}}
+   :ident         (fn [] [:component/id :main])
+   :route-segment ["main"]}
+  (let [current-panel (some-> (dr/current-route this this) first keyword)]
+    (div :.ui.grid
+      (div :.three.wide.column
+        (div :.ui.container.segment
+          (div "Transactions")
+          (div "Queries")
+          (div (dom/a :.item {:classes [(when (= :datoms current-panel) "active")]
+                              :onClick (fn [] (dr/change-route this ["main" "datoms"]))} "Datoms"))
+          (div (dom/a :.item {:classes [(when (= :schema current-panel) "active")]
+                              :onClick (fn []
+                                         (dr/change-route! this ["main" "schema"]))} "Schema"))
+          ))
+      (div :.thirteen.wide.column
+        (div :.ui.container.segment
+          (ui-main-router router)
+          )))))
+
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
   {:query         [:account/time-zone :account/real-name]
@@ -171,7 +228,7 @@
         (p (b "Time Zone: ") time-zone))))
 
 (dr/defrouter TopRouter [this props]
-  {:router-targets [Schema Signup SignupSuccess Settings]})
+  {:router-targets [Main Signup SignupSuccess Settings]})
 
 (def ui-top-router (comp/factory TopRouter))
 
@@ -201,17 +258,16 @@
   (let [current-tab (some-> (dr/current-route this this) first keyword)]
     (div :.ui.container
       (div :.ui.secondary.pointing.menu
-        (dom/a :.item {:classes [(when (= :schema current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["schema"]))} "Schema")
+        (dom/a :.item {:classes [(when (= :main current-tab) "active")]
+                       :onClick (fn []
+                                  (dr/change-route this ["main"]))} "Dashboard")
         (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
+                       :onClick (fn []
+                                  (dr/change-route this ["settings"]))} "Settings")
         (div :.right.menu
           (ui-login login)))
       (div :.ui.grid
-        (div :.two.wide.column
-          (div "Transactions")
-          (div "Schema"))
-        (div :.fourteen.wide.column
+        (div :.ui.row
           (ui-top-router router))))))
 
 (def ui-top-chrome (comp/factory TopChrome))
