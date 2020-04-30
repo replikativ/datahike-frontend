@@ -6,7 +6,7 @@
            com.taoensso/timbre                 {:mvn/version "4.10.0"}
            com.taoensso/tufte                  {:mvn/version "2.1.0-RC4"}
            com.wsscode/pathom                  {:mvn/version "2.2.26"}
-           com.fulcrologic/fulcro              {:mvn/version "3.0.9"}
+           com.fulcrologic/fulcro              {:mvn/version "3.2.3"}
            com.fulcrologic/fulcro-garden-css   {:mvn/version "3.0.7"}
            com.fulcrologic/semantic-ui-wrapper {:mvn/version "1.0.0"}
            com.fulcrologic/guardrails          {:mvn/version "0.0.9"}
@@ -18,6 +18,7 @@
 
            ;; To simulate Datomic on the back-end
            datascript                          {:mvn/version "0.18.4"}
+           io.replikativ/datahike              {:mvn/version "0.2.2-SNAPSHOT"}
 
            ring/ring-core                      {:mvn/version "1.7.1"}
            ring/ring-defaults                  {:mvn/version "0.3.2"}}
@@ -37,7 +38,7 @@
                                      com.github.awkay/workspaces {:mvn/version "1.0.0-RC2"},
                                      org.clojure/tools.namespace {:mvn/version "0.3.1"}
                                      org.clojure/data.xml        {:mvn/version "0.0.8"}}}
-           :cider-clj {:extra-deps {cider/cider-nrepl {:mvn/version "0.23.0-SNAPSHOT"}}
+           :cider-clj {:extra-deps {cider/cider-nrepl {:mvn/version "0.25.0-SNAPSHOT"}}
                        :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}}
 
 

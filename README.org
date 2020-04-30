@@ -32,7 +32,7 @@
     - (start)
 ** CLIENT, cljs
 - cider-jack-in-cljs
-  - (This will execute: - npx shadow-cljs server followed by '(shadow/repl :main)') (Use this rather on IntelliJ)
+  - (This will execute: - npx shadow-cljs server (followed it by '(shadow/repl :main)' if running in a shell) (Use this rather on IntelliJ)
   - Always choose options related to 'shadow'
 - You might need to compile the js code here: http://localhost:9630
 - The http server is here: http://localhost:8000/
