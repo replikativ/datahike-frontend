@@ -14,6 +14,8 @@
     [com.fulcrologic.fulcro-css.css :as css]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
     [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
+    ["material-table" :default MaterialTable]
+    ["victory" :refer [VictoryChart VictoryAxis VictoryLine VictoryPie]]
     [taoensso.timbre :as log]))
 
 (defn field [{:keys [label valid? error-message] :as props}]
@@ -137,24 +139,38 @@
 (def ui-login (comp/factory Login))
 
 
+(def mtable (interop/react-factory MaterialTable))
+
+(def vchart (interop/react-factory VictoryChart))
+(def vaxis (interop/react-factory VictoryAxis))
+(def vline (interop/react-factory VictoryLine))
+(def vpie (interop/react-factory VictoryPie))
+
+
+
 (defsc Datoms [this {:datoms/keys [id elements] :as props}]
   {:query [:datoms/id :datoms/elements]
    :initial-state (fn [_] {:datoms/id      ":datoms-init-state"
                            :datoms/elements {}})
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
-  (table :.ui.cell.table
-    (thead
-      (tr
-        (th "entity id")
-        (th "attributes")
-        (th "value")
-        (th "tr. id")
-        (th "added")))
-    (tbody
-      (map #(tr
-              (map (fn [el] (td (str el))) %))
-        elements))))
+  (div
+    (mtable )
+    (vpie)
+    )
+  ;; (table :.ui.cell.table
+  ;;   (thead
+  ;;     (tr
+  ;;       (th "entity id")
+  ;;       (th "attributes")
+  ;;       (th "value")
+  ;;       (th "tr. id")
+  ;;       (th "added")))
+  ;;   (tbody
+  ;;     (map #(tr
+  ;;             (map (fn [el] (td (str el))) %))
+  ;;          elements)))
+  )
 
 (def ui-datoms (comp/factory Datoms))
 
