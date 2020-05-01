@@ -8,6 +8,7 @@
   - [[#server-ie-clj-side][SERVER, i.e. Clj side]]
   - [[#client-cljs][CLIENT, cljs]]
 - [[#list][LIST]]
+  - [[#add-css-to-material-table-link-relstylesheet-hrefhttpsfontsgoogleapiscomiconfamilymaterialicons][Add css to material-table: <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">]]
   - [[#read-what-chrisitian-says-about-frontend][read what chrisitian says about frontend]]
   - [[#watch-videos-on-why-fulcro][watch videos on why fulcro]]
   - [[#use-the-component-christian-suggested][use the component christian suggested]]
@@ -40,6 +41,7 @@
 
 
 * TODO LIST
+** DONE Add css to material-table: <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 ** TODO read what chrisitian says about frontend
 ** TODO watch videos on why fulcro
 ** TODO use the component christian suggested
