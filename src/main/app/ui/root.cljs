@@ -170,8 +170,17 @@
                                :value (nth datom 2)
                                :tr_id (nth datom 3)
                                :added (nth datom 4)})
-               elements)}
-      (vpie)))
+               elements)
+       
+       :editable {:onRowAdd id
+                  :onRowUpdate (fn [newData, oldData]
+                                 (js/Promise.resolve newData))
+                  :onRowDelete id}
+       })
+
+
+      (vpie))
+
   ;; (table :.ui.cell.table
   ;;   (thead
   ;;     (tr
