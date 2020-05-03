@@ -1,6 +1,7 @@
 (ns app.ui.root
   (:require
-    [app.model.session :as session]
+   [app.model.session :as session]
+   [app.model.datoms :as datoms]
     [clojure.string :as str]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
@@ -147,7 +148,6 @@
 (def vpie (interop/react-factory VictoryPie))
 
 
-
 (defsc Datoms [this {:datoms/keys [id elements] :as props}]
   {:query [:datoms/id :datoms/elements]
    :initial-state (fn [_] {:datoms/id      ":datoms-init-state"
@@ -156,7 +156,7 @@
    :route-segment ["datoms"]}
   (div
     (mtable 
-      {:title "Datoms"
+      {:title "Datoms" 
        :columns [
                  { :title "Entity" :field :entity }
                  { :title "Attributes" :field :attributes }
@@ -174,7 +174,10 @@
        
        :editable {:onRowAdd id
                   :onRowUpdate (fn [newData, oldData]
-                                 (js/Promise.resolve newData))
+                                 (do
+                                   ;; do the defmutation here
+                                   (comp/transact! this [(datoms/update-datoms {:datoms/value  #_newData (js->clj newData :keywordize-keys true)})])
+                                   (js/Promise.resolve newData)))
                   :onRowDelete id}
        })
 
