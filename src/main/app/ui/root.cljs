@@ -155,28 +155,28 @@
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
   (div
-    (mtable 
-      {:title "Datoms" 
-       :columns [
-                 { :title "Entity" :field :entity }
-                 { :title "Attributes" :field :attributes }
-                 { :title "Value" :field :value }
-                 { :title "Transac. id" :field :tr_id }
-                 { :title "Added" :field :added }
-                 ]
+    (mtable
+      {:title    "Datoms"
+       :columns  [
+                  {:title "Entity" :field :entity}
+                  {:title "Attributes" :field :attributes}
+                  {:title "Value" :field :value}
+                  {:title "Transac. id" :field :tr_id}
+                  {:title "Added" :field :added}
+                  ]
 
-       :data (map (fn [datom] {:entity (first datom)
-                               :attributes (str (nth datom 1))
-                               :value (nth datom 2)
-                               :tr_id (nth datom 3)
-                               :added (nth datom 4)})
-               elements)
-       
-       :editable {:onRowAdd id
+       :data     (map (fn [datom] {:entity     (first datom)
+                                   :attributes (str (nth datom 1))
+                                   :value      (nth datom 2)
+                                   :tr_id      (nth datom 3)
+                                   :added      (nth datom 4)})
+                      elements)
+
+       :editable {:onRowAdd    id
                   :onRowUpdate (fn [newData, oldData]
                                  (do
                                    ;; do the defmutation here
-                                   (comp/transact! this [(datoms/update-datoms {:datoms/value  #_newData (js->clj newData :keywordize-keys true)})])
+                                   (comp/transact! this [(datoms/update-datoms {:datoms/datom (vals (js->clj newData))})])
                                    (js/Promise.resolve newData)))
                   :onRowDelete id}
        })
