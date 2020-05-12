@@ -8,7 +8,7 @@
   - [[#server-ie-clj-side][SERVER, i.e. Clj side]]
   - [[#client-cljs][CLIENT, cljs]]
 - [[#list][LIST]]
-  - [[#see-if-the-dh-db-i-am-using-is-corrupted-when-showing-datoms-try-to-show-datoms-on-another-db][See if the dh db I am using is corrupted when showing datoms. Try to show datoms on another db.]]
+  - [[#move-the-components-for-the-dashboard-in-their-own-cljs][Move the components for the dashboard in their own .cljs]]
   - [[#how-to-return-the-schema-data-fully-at-once][How to return the schema data fully at once]]
   - [[#change-the-renderer-to-what-they-suggest-in-the-slack-channel][Change the renderer to what they suggest in the slack channel]]
 - [[#refs][Refs]]
@@ -37,10 +37,12 @@
 
 
 * TODO LIST
-** See if the dh db I am using is corrupted when showing datoms. Try to show datoms on another db.
+
+** TODO Move the components for the dashboard in their own .cljs
 ** DONE How to return the schema data fully at once
 
 ** TODO [#A] Change the renderer to what they suggest in the slack channel
+
 
 * Refs
 
