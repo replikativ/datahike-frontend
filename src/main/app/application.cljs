@@ -2,6 +2,8 @@
   (:require [com.fulcrologic.fulcro.networking.http-remote :as net]
             [com.fulcrologic.fulcro.application :as app]
             [com.fulcrologic.fulcro.components :as comp]
+            [app.rest-remote :as rest-remote]
+            [app.pathom :as p]
             [com.fulcrologic.fulcro.rendering.keyframe-render2 :refer [render!]]
 
 ))
@@ -17,7 +19,8 @@
                 ;; See middleware.clj to see how the token is embedded into the HTML
                 :remotes {:remote (net/fulcro-http-remote
                                     {:url                "/api"
-                                     :request-middleware secured-request-middleware})}
+                                     :request-middleware secured-request-middleware})
+                          :rest-remote (rest-remote/remote p/parser)}
                 :optimized-render! render!
                 }))
 
