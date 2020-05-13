@@ -49,6 +49,8 @@
   (dr/initialize! SPA)
   (app/current-state SPA)
   (dr/change-route SPA ["settings"])
+  (dr/change-route SPA ["main" "datoms"])
+  (dr/path-to root/Schema)
   (app/mount! SPA root/Root "app")
   (comp/get-query root/Root {})
   (comp/get-query root/Root (app/current-state SPA))
