@@ -39,6 +39,7 @@
 * TODO LIST
 
 ** TODO Move the components for the dashboard in their own .cljs
+
 ** DONE How to return the schema data fully at once
 
 ** TODO [#A] Change the renderer to what they suggest in the slack channel
