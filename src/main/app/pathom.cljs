@@ -1,4 +1,4 @@
-(ns main.app.pathom
+(ns app.pathom
   (:require
    [com.wsscode.common.async-cljs :refer [go-catch <?]]
    [com.wsscode.pathom.core :as p]
