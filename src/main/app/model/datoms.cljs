@@ -27,7 +27,6 @@
     (log/info "OK action"))
   (error-action [env]
     (log/info "Error action"))
-  #_(remote [env]
-    (-> env
-      (m/returning 'app.ui.root/User)
-      (m/with-target (targeting/append-to [:all-accounts])))))
+  (rest-remote [env]
+    (log/info "Rest-remotex ddsxs called!!!!!")
+    true))
