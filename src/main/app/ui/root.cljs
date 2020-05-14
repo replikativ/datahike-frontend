@@ -156,7 +156,7 @@
    :route-segment ["datoms"]}
   (div
     ;; TODO: weird: error with 'setWidth' or smthg like that on small machine
-    #_(mtable
+    (mtable
       {:title    "Datoms"
        :columns  [
                   {:title "Entity" :field :entity}
