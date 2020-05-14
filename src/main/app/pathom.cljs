@@ -6,12 +6,15 @@
    [com.wsscode.pathom.connect.graphql2 :as pcg]
    [com.wsscode.pathom.diplomat.http :as p.http]
    [com.wsscode.pathom.diplomat.http.fetch :as p.http.fetch]
-   [app.client-mutations :as client-mutations]))
+   [app.client-mutations :as client-mutations]
+   [app.client-resolvers :as cr]))
 
 
 (def all-resolvers [;;schema/resolvers datoms/resolvers acct/resolvers session/resolvers
                     ;;index-explorer
-                    client-mutations/mutations])
+                    client-mutations/mutations
+                    cr/resolvers
+                    ])
 
 (def parser
   (p/parallel-parser
