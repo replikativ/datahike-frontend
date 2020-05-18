@@ -25,7 +25,7 @@
            ring/ring-core                      {:mvn/version "1.7.1"}
            ring/ring-defaults                  {:mvn/version "0.3.2"}
            com.cognitect/transit-cljs          {:mvn/version "0.8.256"}
-           cljs-ajax                           {:mvn/version "0.8.0"}}
+           cljs-http                           {:mvn/version "0.1.46"}}
 
  :aliases {:clj-tests {:extra-paths ["src/test"]
                        :main-opts   ["-m" "kaocha.runner"]

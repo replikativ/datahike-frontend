@@ -1,52 +1,53 @@
 (ns app.client-resolvers
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
     [taoensso.timbre :as log]
-    [clojure.core.async :refer [go]]
-    [ajax.core :refer [GET PUT DELETE POST]]
-    ))
-
-
-(defn fetch-schema []
-  (GET "http://localhost:3000/schema"
-       {:handler (fn [r] (println "GET schema returned: " r) ;;(swap! state update-in [:schema] #(merge r core-schema))
-                   )
-        :headers {"Content-Type" "application/transit+json"
-                  "Accept" "application/transit+json"}}))
-
-;; Why is this a POST!?
-#_(defn all-datoms [index]
-  (POST "http://localhost:3000/datoms"
-        {:handler (fn [r]
-                    (swap! state assoc-in [:last-datoms] r))
-         :params {:index :eavt}
-         :headers {"Content-Type" "application/transit+json"
-                   "Accept" "application/transit+json"}}))
-
-
-
+    [cljs-http.client :as http]
+    [cljs.core.async :refer [<!]]))
 
 (defresolver datoms-resolver [env input]
   {::pc/output [{:the-datoms [:datoms/id :datoms/elements]}]}
-
-  ;; {:the-datoms {:datoms/id       :the-datoms
-  ;;               :datoms/elements [[1 :attr 2 3 true]]}}
-
   (let [name    (-> env :ast :params :name)
         params  {"name"      name}]
     (go
-      (let [ _ (fetch-schema)
-            ;;{:keys [body]} (<! (http/get "https://myrest.com/search" {:query-params      params}))
-            ]
+      (let [r (<! (http/post "http://localhost:3000/datoms"
+                    {:with-credentials? false
+                     :headers {"Content-Type" "application/transit+json"
+                               "Accept"       "application/transit+json"}
+                     :transit-params {:index :eavt}}))]
+        (println r)
         {:the-datoms {:datoms/id       :the-datoms
-                      :datoms/elements [[1 :attr 2 3 true]]}}
-        ))))
-
+                      :datoms/elements (:body r)}}))))
 
 (def resolvers [datoms-resolver])
 
 
 
+
+
+
+
 (comment
   (fetch-schema)
+  (all-datoms)
+
+  (go (let [d (<! (http/get "http://localhost:3000/schema"
+                    {:with-credentials? false
+                     :headers {"Content-Type" "application/transit+json"
+                               "Accept"       "application/transit+json"}}
+                             ))]
+        (println d)))
+
+
+  (go
+    (let [r (<! (http/post "http://localhost:3000/datoms"
+                  {:with-credentials? false
+                   :headers {"Content-Type" "application/transit+json"
+                             "Accept"       "application/transit+json"}
+                   :transit-params {:index :eavt}
+                   }))]
+      (println r)
+      ))
+
   )
