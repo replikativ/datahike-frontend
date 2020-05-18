@@ -2,8 +2,25 @@
   (:require
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
     [taoensso.timbre :as log]
+    [ajax.core :refer [GET PUT DELETE POST]]
     ))
 
+
+(defn fetch-schema []
+  (GET "http://localhost:3000/"
+       {:handler (fn [r] (println "GET schema returned: " r) ;;(swap! state update-in [:schema] #(merge r core-schema))
+                   )
+        :headers {"Content-Type" "application/transit+json"
+                  "Accept" "application/transit+json"}}))
+
+;; Why is this a POST!?
+#_(defn all-datoms [index]
+  (POST "http://localhost:3000/datoms"
+        {:handler (fn [r]
+                    (swap! state assoc-in [:last-datoms] r))
+         :params {:index :eavt}
+         :headers {"Content-Type" "application/transit+json"
+                   "Accept" "application/transit+json"}}))
 
 
 (defresolver datoms-resolver [env input]
@@ -15,3 +32,9 @@
 
 
 (def resolvers [datoms-resolver])
+
+
+
+(comment
+  (fetch-schema)
+  )

@@ -23,7 +23,9 @@
            io.replikativ/datahike              {:mvn/version "0.2.1"}
 
            ring/ring-core                      {:mvn/version "1.7.1"}
-           ring/ring-defaults                  {:mvn/version "0.3.2"}}
+           ring/ring-defaults                  {:mvn/version "0.3.2"}
+           com.cognitect/transit-cljs          {:mvn/version "0.8.256"}
+           cljs-ajax                           {:mvn/version "0.8.0"}}
 
  :aliases {:clj-tests {:extra-paths ["src/test"]
                        :main-opts   ["-m" "kaocha.runner"]
