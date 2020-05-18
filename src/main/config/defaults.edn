@@ -1,6 +1,6 @@
 {:legal-origins              #{"localhost" "dev.lvh.me"}
 
- :org.httpkit.server/config {:port 3000}
+ :org.httpkit.server/config {:port 4000}
 
  :taoensso.timbre/logging-config
                              {:level        :info
