@@ -15,9 +15,10 @@
                              "Accept"       "application/transit+json"}}))]
       (println r)
       {:the-schema {:schema/id       :the-schema
-                    :schema/elements (:body r)}}))
+                    :schema/elements (:body r)}})))
 
-  (def resolvers [schema-resolver]))
+
+(def resolvers [schema-resolver])
 
 
 
