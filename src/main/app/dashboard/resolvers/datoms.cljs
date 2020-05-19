@@ -1,4 +1,4 @@
-(ns app.dashboard.client-resolvers
+(ns app.dashboard.resolvers.datoms
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
