@@ -3,6 +3,7 @@
     [app.application :refer [SPA]]
     [app.ui.root :as root]
     [app.dashboard.ui.queries.datoms :as dui]
+    [app.dashboard.ui.queries.schema :as sui]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.networking.http-remote :as net]
     [com.fulcrologic.fulcro.data-fetch :as df]
@@ -32,7 +33,7 @@
     {:actor/login-form      root/Login
      :actor/current-session root/Session})
   (app/mount! SPA root/Root "app" {:initialize-state? false})
-  (df/load! SPA :the-schema root/Schema)
+  (df/load! SPA :the-schema sui/Schema {:remote :rest-remote})
   (df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote}))
 
 (comment

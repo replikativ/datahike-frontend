@@ -14,6 +14,7 @@
     [com.fulcrologic.fulcro-css.css :as css]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
     [app.dashboard.ui.queries.datoms :as dui]
+    [app.dashboard.ui.queries.schema :as sui]
     [taoensso.timbre :as log]))
 
 (defn field [{:keys [label valid? error-message] :as props}]
@@ -138,35 +139,8 @@
 
 
 
-
-(defsc Schema [this {:schema/keys [id elements] :as props}]
-  {:query [:schema/id :schema/elements]
-   :initial-state (fn [_] {:schema/id      ":init-state"
-                           :schema/elements {}})
-   :ident         (fn [] [:schema/id :the-schema])
-   :route-segment ["schema"]}
-  (table :.ui.cell.table
-    (thead
-      (tr
-        (th "ident")
-        (th "valueType")
-        (th "cardinality")
-        (th "doc")
-        (th "index")
-        (th "unique")
-        (th "noHistory")
-        (th "isComponent")))
-    (tbody
-      (map #(tr
-              (td (str (:db/ident %)))
-              (td (str (:db/valueType %))))
-        elements))))
-
-(def ui-schema (comp/factory Schema))
-
-
 (dr/defrouter MainRouter [this props]
-  {:router-targets [dui/Datoms Schema]})
+  {:router-targets [dui/Datoms sui/Schema]})
 
 (def ui-main-router (comp/factory MainRouter))
 
@@ -184,9 +158,12 @@
           (div "Transactions")
           (div "Queries")
           (div (dom/a :.item {:classes [(when (= :datoms current-panel) "active")]
-                              :onClick (fn [] (dr/change-route this ["main" "datoms"]))} "Datoms"))
+                              :onClick (fn []
+                                         (println "About to rout to datoms")
+                                         (dr/change-route this ["main" "datoms"]))} "Datoms"))
           (div (dom/a :.item {:classes [(when (= :schema current-panel) "active")]
                               :onClick (fn []
+                                         (println "About to rout to SCHEMA")
                                          (dr/change-route! this ["main" "schema"]))} "Schema"))
           ))
       (div :.thirteen.wide.column
@@ -227,9 +204,7 @@
   {:query         [{:root/router (comp/get-query TopRouter)}
                    {:root/current-session (comp/get-query Session)}
                    [::uism/asm-id ::TopRouter]
-                   {:root/login (comp/get-query Login)}
-                   {:the-schema (comp/get-query Schema)}
-                   ]
+                   {:root/login (comp/get-query Login)}]
    :ident         (fn [] [:component/id :top-chrome])
    :initial-state {:root/router          {}
                    :root/login           {}

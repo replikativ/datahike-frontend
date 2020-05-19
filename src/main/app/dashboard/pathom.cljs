@@ -8,11 +8,11 @@
     [com.wsscode.pathom.diplomat.http.fetch :as p.http.fetch]
     [app.dashboard.mutations.datoms :as datoms]
     [taoensso.timbre :as log]
-    [app.dashboard.resolvers.datoms :as dr]))
+    [app.dashboard.resolvers.datoms :as dr]
+    [app.dashboard.resolvers.schema :as sr]))
 
 
-(def all-resolvers [dr/resolvers
-                    datoms/send-message])
+(def all-resolvers [dr/resolvers sr/resolvers datoms/send-message])
 
 (def parser
   (p/parallel-parser

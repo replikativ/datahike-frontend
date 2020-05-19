@@ -14,7 +14,7 @@
                    :headers {"Content-Type" "application/transit+json"
                              "Accept"       "application/transit+json"}
                    :transit-params {:index :eavt}}))]
-      ;;(println r)
+      (println r)
       {:the-datoms {:datoms/id       :the-datoms
                     :datoms/elements (:body r)}})))
 
