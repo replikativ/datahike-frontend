@@ -15,7 +15,9 @@
                              "Accept"       "application/transit+json"}}))]
       (println r)
       {:the-schema {:schema/id       :the-schema
-                    :schema/elements (:body r)}})))
+                    :schema/elements (vec (vals (filter (comp keyword? key)
+                                                  (:body r))))}})))
+
 
 
 (def resolvers [schema-resolver])
