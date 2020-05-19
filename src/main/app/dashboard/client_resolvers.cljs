@@ -1,4 +1,4 @@
-(ns app.client-resolvers
+(ns app.dashboard.client-resolvers
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
@@ -16,7 +16,7 @@
                      :headers {"Content-Type" "application/transit+json"
                                "Accept"       "application/transit+json"}
                      :transit-params {:index :eavt}}))]
-        (println r)
+        ;;(println r)
         {:the-datoms {:datoms/id       :the-datoms
                       :datoms/elements (:body r)}}))))
 

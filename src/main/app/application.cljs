@@ -2,8 +2,8 @@
   (:require [com.fulcrologic.fulcro.networking.http-remote :as net]
             [com.fulcrologic.fulcro.application :as app]
             [com.fulcrologic.fulcro.components :as comp]
-            [app.rest-remote :as rest-remote]
-            [app.pathom :as p]
+            [app.dashboard.rest-remote :as rest-remote]
+            [app.dashboard.pathom :as p]
             [com.fulcrologic.fulcro.rendering.keyframe-render2 :refer [render!]]
 
 ))

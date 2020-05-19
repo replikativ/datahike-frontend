@@ -1,4 +1,4 @@
-(ns app.rest-remote 
+(ns app.dashboard.rest-remote
   (:require
    [clojure.core.async :refer [go]]
    [com.wsscode.async.async-cljs :refer [<?maybe]]

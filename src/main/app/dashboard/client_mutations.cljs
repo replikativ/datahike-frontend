@@ -1,4 +1,4 @@
-(ns app.client-mutations
+(ns app.dashboard.client-mutations
   (:require
     [com.wsscode.pathom.connect :as pc]
     [taoensso.timbre :as log]))
