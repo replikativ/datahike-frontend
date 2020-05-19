@@ -24,9 +24,18 @@
         (th "noHistory")
         (th "isComponent")))
     (tbody
-      (map #(tr
-              (td (str (:db/ident %)))
-              (td (str (:db/valueType %))))
+      ;; TODO: 'when' because the input from db contains some entries without a :db/ident. Fix this later.
+      (map #(when (:db/ident %)
+              (tr
+                (td (str (:db/ident %)))
+                (td (str (:db/valueType %)))
+                (td (str (:db/cardinality %)))
+                (td (str (:db/doc %)))
+                (td (str (:db/index %)))
+                (td (str (:db/unique %)))
+                (td (str (:db/noHistory %)))
+                (td (str (:db/isComponent %)))))
+
         elements))))
 
 (def ui-schema (comp/factory Schema))
