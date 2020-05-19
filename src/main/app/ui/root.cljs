@@ -16,7 +16,6 @@
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
     [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
     ["material-table" :default MaterialTable]
-    ["victory" :refer [VictoryChart VictoryAxis VictoryLine VictoryPie]]
     [taoensso.timbre :as log]))
 
 (defn field [{:keys [label valid? error-message] :as props}]
@@ -142,11 +141,6 @@
 
 (def mtable (interop/react-factory MaterialTable))
 
-(def vchart (interop/react-factory VictoryChart))
-(def vaxis (interop/react-factory VictoryAxis))
-(def vline (interop/react-factory VictoryLine))
-(def vpie (interop/react-factory VictoryPie))
-
 
 (defsc Datoms [this {:datoms/keys [id elements] :as props}]
   {:query [:datoms/id :datoms/elements]
@@ -180,24 +174,7 @@
                                    (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
                                    (js/Promise.resolve newData)))
                   :onRowDelete id}
-       })
-
-
-      (vpie))
-
-  ;; (table :.ui.cell.table
-  ;;   (thead
-  ;;     (tr
-  ;;       (th "entity id")
-  ;;       (th "attributes")
-  ;;       (th "value")
-  ;;       (th "tr. id")
-  ;;       (th "added")))
-  ;;   (tbody
-  ;;     (map #(tr
-  ;;             (map (fn [el] (td (str el))) %))
-  ;;          elements)))
-  )
+       })))
 
 (def ui-datoms (comp/factory Datoms))
 
