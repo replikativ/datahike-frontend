@@ -1,7 +1,6 @@
 (ns app.ui.root
   (:require
     [app.model.session :as session]
-    [app.dashboard.mutations.datoms :as dm]
     [clojure.string :as str]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
@@ -14,8 +13,7 @@
     [com.fulcrologic.fulcro.algorithms.merge :as merge]
     [com.fulcrologic.fulcro-css.css :as css]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
-    [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
-    ["material-table" :default MaterialTable]
+    [app.dashboard.ui.queries.datoms :as dui]
     [taoensso.timbre :as log]))
 
 (defn field [{:keys [label valid? error-message] :as props}]
@@ -139,45 +137,6 @@
 (def ui-login (comp/factory Login))
 
 
-(def mtable (interop/react-factory MaterialTable))
-
-
-(defsc Datoms [this {:datoms/keys [id elements] :as props}]
-  {:query [:datoms/id :datoms/elements]
-   :initial-state (fn [_] {:datoms/id      ":datoms-init-state"
-                           :datoms/elements {}})
-   :ident         (fn [] [:datoms/id :the-datoms])
-   :route-segment ["datoms"]}
-  (div
-    ;; TODO: weird: error with 'setWidth' or smthg like that on small machine
-    (mtable
-      {:title    "Datoms"
-       :columns  [
-                  {:title "Entity" :field :entity}
-                  {:title "Attributes" :field :attributes}
-                  {:title "Value" :field :value}
-                  {:title "Transac. id" :field :tr_id}
-                  {:title "Added" :field :added}
-                  ]
-
-       :data     (map (fn [datom] {:entity     (first datom)
-                                   :attributes (str (nth datom 1))
-                                   :value      (nth datom 2)
-                                   :tr_id      (nth datom 3)
-                                   :added      (nth datom 4)})
-                      elements)
-
-       :editable {:onRowAdd    id
-                  :onRowUpdate (fn [newData, oldData]
-                                 (do
-                                   ;; do the defmutation here
-                                   (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
-                                   (js/Promise.resolve newData)))
-                  :onRowDelete id}
-       })))
-
-(def ui-datoms (comp/factory Datoms))
-
 
 
 (defsc Schema [this {:schema/keys [id elements] :as props}]
@@ -207,7 +166,7 @@
 
 
 (dr/defrouter MainRouter [this props]
-  {:router-targets [Datoms Schema]})
+  {:router-targets [dui/Datoms Schema]})
 
 (def ui-main-router (comp/factory MainRouter))
 
