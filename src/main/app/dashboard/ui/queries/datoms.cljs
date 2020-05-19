@@ -18,7 +18,6 @@
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
   (div
-    ;; TODO: weird: error with 'setWidth' or smthg like that on small machine
     (mtable
       {:title    "Datoms"
        :columns  [
@@ -26,8 +25,7 @@
                   {:title "Attributes" :field :attributes}
                   {:title "Value" :field :value}
                   {:title "Transac. id" :field :tr_id}
-                  {:title "Added" :field :added}
-                  ]
+                  {:title "Added" :field :added}]
 
        :data     (map (fn [datom] {:entity     (first datom)
                                    :attributes (str (nth datom 1))
