@@ -1,15 +1,14 @@
 (ns app.dashboard.pathom
   (:require
-   [com.wsscode.common.async-cljs :refer [go-catch <?]]
-   [com.wsscode.pathom.core :as p]
-   [com.wsscode.pathom.connect :as pc]
-   [com.wsscode.pathom.connect.graphql2 :as pcg]
-   [com.wsscode.pathom.diplomat.http :as p.http]
-   [com.wsscode.pathom.diplomat.http.fetch :as p.http.fetch]
-   [app.dashboard.client-mutations :as client-mutations]
-   [app.model.datoms :as datoms]
-   [taoensso.timbre :as log]
-   [app.dashboard.client-resolvers :as cr]))
+    [com.wsscode.common.async-cljs :refer [go-catch <?]]
+    [com.wsscode.pathom.core :as p]
+    [com.wsscode.pathom.connect :as pc]
+    [com.wsscode.pathom.connect.graphql2 :as pcg]
+    [com.wsscode.pathom.diplomat.http :as p.http]
+    [com.wsscode.pathom.diplomat.http.fetch :as p.http.fetch]
+    [app.dashboard.mutations.datoms :as datoms]
+    [taoensso.timbre :as log]
+    [app.dashboard.resolvers :as cr]))
 
 
 (def all-resolvers [cr/resolvers

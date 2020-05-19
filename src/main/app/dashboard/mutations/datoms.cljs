@@ -1,4 +1,4 @@
-(ns app.model.datoms
+(ns app.dashboard.mutations.datoms
   (:require
    [taoensso.timbre :as log]
    [cljs.pprint :as p]

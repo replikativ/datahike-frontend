@@ -1,7 +1,7 @@
 (ns app.ui.root
   (:require
-   [app.model.session :as session]
-   [app.model.datoms :as datoms]
+    [app.model.session :as session]
+    [app.dashboard.mutations.datoms :as dm]
     [clojure.string :as str]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
@@ -177,7 +177,7 @@
                   :onRowUpdate (fn [newData, oldData]
                                  (do
                                    ;; do the defmutation here
-                                   (comp/transact! this [(datoms/update-datoms {:datoms/datom (vals (js->clj newData))})])
+                                   (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
                                    (js/Promise.resolve newData)))
                   :onRowDelete id}
        })
