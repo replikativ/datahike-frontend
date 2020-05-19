@@ -40,7 +40,6 @@
                                    ;; do the defmutation here
                                    (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
                                    (js/Promise.resolve newData)))
-                  :onRowDelete id}
-       })))
+                  :onRowDelete id}})))
 
 (def ui-datoms (comp/factory Datoms))
