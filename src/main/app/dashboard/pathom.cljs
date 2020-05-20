@@ -12,7 +12,7 @@
     [app.dashboard.resolvers.schema :as sr]))
 
 
-(def all-resolvers [dr/resolvers sr/resolvers datoms/send-message])
+(def all-resolvers [dr/resolvers sr/resolvers datoms/transact-datoms])
 
 (def parser
   (p/parallel-parser

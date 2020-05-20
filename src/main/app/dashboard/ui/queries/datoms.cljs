@@ -21,11 +21,11 @@
     (mtable
       {:title    "Datoms"
        :columns  [
-                  {:title "Entity" :field :entity}
-                  {:title "Attributes" :field :attributes}
-                  {:title "Value" :field :value}
-                  {:title "Transac. id" :field :tr_id}
-                  {:title "Added" :field :added}]
+                  {:title "Entity"       :field :entity}
+                  {:title "Attributes"   :field :attributes}
+                  {:title "Value"        :field :value}
+                  {:title "Transac. id"  :field :tr_id}
+                  {:title "Added"        :field :added}]
 
        :data     (map (fn [datom] {:entity     (first datom)
                                    :attributes (str (nth datom 1))

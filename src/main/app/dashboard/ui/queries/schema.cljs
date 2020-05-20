@@ -35,7 +35,6 @@
                 (td (str (:db/unique %)))
                 (td (str (:db/noHistory %)))
                 (td (str (:db/isComponent %)))))
-
         elements))))
 
 (def ui-schema (comp/factory Schema))

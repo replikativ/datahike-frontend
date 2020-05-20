@@ -1,4 +1,5 @@
 (ns app.dashboard.mutations.datoms
+  (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [taoensso.timbre :as log]
    [cljs.pprint :as p]
@@ -6,6 +7,8 @@
    [com.wsscode.pathom.connect :as pc]
    [com.fulcrologic.fulcro.algorithms.merge :as merge]
    [edn-query-language.core :as eql]
+   [cljs-http.client :as http]
+   [cljs.core.async :refer [<!]]
    [com.fulcrologic.fulcro.algorithms.data-targeting :as targeting]))
 
 
@@ -23,28 +26,45 @@
           (merge/merge-ident [:datoms/id :the-datoms]
             {:datoms/id       :the-datoms
              :datoms/elements (into [(vec datom)]
-                                (get-in @state [:datoms/id
-                                                :the-datoms
+                                (get-in @state [:datoms/id :the-datoms
                                                 :datoms/elements]))})))))
   (ok-action [env]
     (log/info "OK action"))
   (error-action [env]
     (log/info "Error action"))
-  (rest-remote [env] (eql/query->ast1 `[(send-message {:message/text "hello"})]))
-
-  #_(rest-remote [env]
-    (log/info "In (datoms.cljs rest-remote)!!!!!")
-    true))
-
-
-(pc/defmutation send-message [env {:keys [message/text]}]
-  {;;::pc/sym    `send-message ;; If using 'sym then !!! the quote is a BACK quote
-   ::pc/params [:message/text]
-   ::pc/output [:message/id :message/text]}
-  (log/info "In client-mutations - send-message !!!!!")
-  {:message/id   123
-   :message/text text})
+  (rest-remote [env] (eql/query->ast1 `[(transact-datoms {:datoms/datom datom})])))
 
 
 
-(def mutations [send-message])
+(pc/defmutation transact-datoms [env {:keys [datoms/datom]}]
+  {;;::pc/sym    `transact-datoms ;; If using 'sym then !!! the quote is a BACK quote
+   ::pc/params [:datoms/datom]
+   ::pc/output [:datoms/id]}
+  (log/info "In client-mutations - transact-datoms !!!!!")
+  (go (let [d (<! (http/post "http://localhost:3000/transact"
+                    {:with-credentials? false
+                     :headers {"Content-Type" "application/transit+msgpack"
+                               "Accept"       "application/transit+msgpack"}
+                     :transit-params {:tx-data [[:db/add -1 :name "Ivan"]],
+                                      :tx-meta [{}]}}))]
+        (println "resp: " d)
+        {:datom/id -1})))
+
+
+
+(def mutations [transact-datoms])
+
+
+
+(comment
+  (go (let [d (<! (http/post "http://localhost:3000/transact"
+                    {:with-credentials? false
+                     :headers {"Content-Type" "application/transit+msgpack"
+                               "Accept"       "application/transit+msgpack"}
+                     :transit-params {:tx-data [[:db/add -1 :name "Ivan"]],
+                                      :tx-meta [{}]
+                                      }}))]
+        (println d)))
+
+
+  )

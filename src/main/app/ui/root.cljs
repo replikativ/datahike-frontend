@@ -155,8 +155,8 @@
     (div :.ui.grid
       (div :.three.wide.column
         (div :.ui.container.segment
-          (div "Transactions")
-          (div "Queries")
+          ;;(div "Transactions")
+          ;;(div "Queries")
           (div (dom/a :.item {:classes [(when (= :datoms current-panel) "active")]
                               :onClick (fn []
                                          (println "About to rout to datoms")
