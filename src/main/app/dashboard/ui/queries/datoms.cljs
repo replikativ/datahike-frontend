@@ -30,11 +30,20 @@
        :data     (map (fn [datom] {:entity     (first datom)
                                    :attributes (str (nth datom 1))
                                    :value      (nth datom 2)
-                                   :tr_id      (nth datom 3)
-                                   :added      (nth datom 4)})
+                                   ;; :tr_id      (if (> (count datom) 3) (nth datom 3) "")
+                                   ;; :added      (if (> (count datom) 4) (nth datom 4) "")
+                                   :tr_id       (nth datom 3)
+                                   :added       (nth datom 4)
+
+                                   })
                       elements)
 
-       :editable {:onRowAdd    id
+       :editable {:onRowAdd    (fn [newData]
+                                 (do
+                                   (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
+                                   (js/Promise.resolve newData)
+                                   ))
+
                   :onRowUpdate (fn [newData, oldData]
                                  (do
                                    ;; do the defmutation here

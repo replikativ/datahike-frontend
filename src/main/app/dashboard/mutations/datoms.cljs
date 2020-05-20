@@ -19,7 +19,8 @@
     ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
     ;;(println (vals value))
     ;;(p/pprint #_@state)
-    
+    (println "datom: " datom)
+
     (swap! state
       (fn [s]
         (-> s
@@ -42,12 +43,14 @@
    ::pc/output [:datoms/id]}
   (log/info "In client-mutations - transact-datoms !!!!!")
   (go (let [d (<! (http/post "http://localhost:3000/transact"
-                    {:with-credentials? false
-                     :headers {"Content-Type" "application/transit+msgpack"
-                               "Accept"       "application/transit+msgpack"}
-                     :transit-params {:tx-data [[:db/add -1 :name "Ivan"]],
-                                      :tx-meta [{}]}}))]
-        (println "resp: " d)
+                             {:with-credentials? false
+                              :headers           {"Content-Type" "application/edn"
+                                                  "Accept"       "application/edn"}
+                              :edn-params        {:tx-data [[:db/add -1 :player/name "Ivan333"]]
+                                                  :tx-meta []}
+                              }))]
+        (println "resp: " (:body d))
+        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
         {:datom/id -1})))
 
 
@@ -58,12 +61,12 @@
 
 (comment
   (go (let [d (<! (http/post "http://localhost:3000/transact"
-                    {:with-credentials? false
-                     :headers {"Content-Type" "application/transit+msgpack"
-                               "Accept"       "application/transit+msgpack"}
-                     :transit-params {:tx-data [[:db/add -1 :name "Ivan"]],
-                                      :tx-meta [{}]
-                                      }}))]
+                             {:with-credentials? false
+                              :headers           {"Content-Type" "application/edn"
+                                                  "Accept"       "application/edn"}
+                              :edn-params        {:tx-data [[:db/add -1 :player/name "IIIIvano"]]
+                                                  :tx-meta []}
+                              }))]
         (println d)))
 
 
