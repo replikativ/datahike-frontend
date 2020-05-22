@@ -148,7 +148,7 @@
 (defsc Main [this {:main/keys [router]}]
   {:query         [{:main/router (comp/get-query MainRouter)}
                    ]
-   :initial-state {:main/router {}}
+   :initial-state (fn [_] {:main/router (comp/get-initial-state MainRouter)})
    :ident         (fn [] [:component/id :main])
    :route-segment ["main"]}
   (let [current-panel (some-> (dr/current-route this this) first keyword)]

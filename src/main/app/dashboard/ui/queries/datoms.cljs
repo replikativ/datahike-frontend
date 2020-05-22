@@ -1,6 +1,7 @@
 (ns app.dashboard.ui.queries.datoms
   (:require
    [app.dashboard.mutations.datoms :as dm]
+   [app.dashboard.ui.queries.query-input :as query-input]
    [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
    [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody]]
@@ -18,6 +19,7 @@
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
   (div
+    (query-input/ui-query-input)
     (mtable
       {:title    "Datoms"
        :columns  [

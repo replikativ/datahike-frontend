@@ -11,6 +11,24 @@
    [cljs.core.async :refer [<!]]
    [com.fulcrologic.fulcro.algorithms.data-targeting :as targeting]))
 
+(defmutation submit-query-input
+  "Submits the query entered manually by user"
+  [{:queries/keys [query]}]
+  (action [{:keys [state]}]
+    ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
+    ;;(println (vals value))
+    ;;(p/pprint #_@state)
+    (println "query: " query)
+
+    #_(swap! state
+        (fn [s]
+          (-> s
+            (merge/merge-ident [:datoms/id :the-datoms]
+              {:datoms/id       :the-datoms
+               :datoms/elements (into [(vec datom)]
+                                  (get-in @state [:datoms/id :the-datoms
+                                                  :datoms/elements]))}))))))
+
 
 (defmutation update-datoms
   "Client Mutation: Replaces the vector which contains all the datoms"
