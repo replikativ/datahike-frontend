@@ -19,7 +19,7 @@
     ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
     ;;(println (vals value))
     ;;(p/pprint #_@state)
-    (println "datom: " datom)
+(println "datom: " datom)
 
     (swap! state
       (fn [s]
@@ -33,25 +33,30 @@
     (log/info "OK action"))
   (error-action [env]
     (log/info "Error action"))
-  (rest-remote [env] (eql/query->ast1 `[(transact-datoms {:datoms/datom datom})])))
+  (rest-remote [env]
+      ;;(println "in Fulcro mutation: datom: " (type datom))
+    (eql/query->ast1 `[(transact-datoms {:datoms/my-datom ~datom})])))
 
 
 
-(pc/defmutation transact-datoms [env {:keys [datoms/datom]}]
-  {;;::pc/sym    `transact-datoms ;; If using 'sym then !!! the quote is a BACK quote
-   ::pc/params [:datoms/datom]
+;; TODO: issues is that my-datom content is made of Strings only
+(pc/defmutation transact-datoms [env {:keys [datoms/my-datom]}]
+  {::pc/sym    `transact-datoms ;; If using 'sym then !!! the quote is a BACK quote
+   ::pc/params [:datoms/my-datom]
    ::pc/output [:datoms/id]}
-  (log/info "In client-mutations - transact-datoms !!!!!")
+  (log/info (str "In client-mutations - transact-datoms: --- " (coll? my-datom) "---" ))
   (go (let [d (<! (http/post "http://localhost:3000/transact"
-                             {:with-credentials? false
-                              :headers           {"Content-Type" "application/edn"
-                                                  "Accept"       "application/edn"}
-                              :edn-params        {:tx-data [[:db/add -1 :player/name "Ivan333"]]
-                                                  :tx-meta []}
+                    {:with-credentials? false
+                     :headers           {"Content-Type" "application/edn"
+                                         "Accept"       "application/edn"}
+                     :edn-params        {:tx-data [my-datom]
+                                         ;;[[:db/add -1 :player/name "IIIIvanooooo"]]
+                                         :tx-meta []}
                               }))]
         (println "resp: " (:body d))
+        (println "my good datom: " my-datom)
         ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
-        {:datom/id -1})))
+        {:datoms/id -1})))
 
 
 
