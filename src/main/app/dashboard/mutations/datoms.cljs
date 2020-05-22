@@ -13,26 +13,61 @@
 
 (defmutation submit-query-input
   "Submits the query entered manually by user"
-  [{:queries/keys [query]}]
+  [{:query-input/keys [entity-id selector]}]
   (action [{:keys [state]}]
     ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
     ;;(println (vals value))
     ;;(p/pprint #_@state)
-    (println "query: " query)
+    (println "entity-id********: " entity-id "// ssssselector: " selector)
 
-    #_(swap! state
-        (fn [s]
-          (-> s
-            (merge/merge-ident [:datoms/id :the-datoms]
-              {:datoms/id       :the-datoms
-               :datoms/elements (into [(vec datom)]
-                                  (get-in @state [:datoms/id :the-datoms
-                                                  :datoms/elements]))}))))))
+    (swap! state
+      (fn [s]
+        (-> s
+          (merge/merge-ident [:datoms/id :the-datoms]
+            {:datoms/id       :the-datoms
+             :datoms/elements (into [[0 :name "joe"]]
+                                (get-in @state [:datoms/id :the-datoms
+                                                :datoms/elements]))}))))
+
+    )
+
+  (ok-action [env]
+    (log/info "OK action"))
+  (error-action [env]
+    (log/info "Error action"))
+  (rest-remote [env]
+    ;;(println "....................in Fulcro mutation:")
+    (eql/query->ast1 `[(pull-query  {:query-input/entity-id ~entity-id
+                                     :query-input/selector ~selector}
+                         )])
+    ))
+
+
+(pc/defmutation pull-query [env {:query-input/keys [entity-id selector]}]
+  {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
+   ::pc/params [:query-input/entity-id :query-input/selector] 
+   ::pc/output [:datoms/id]}
+  (log/info (str "In pathom-mutations - pull: --- " entity-id " --- " selector ))
+  (go (let [d (<! (http/post "http://localhost:3000/pull"
+                             {:with-credentials? false
+                              :headers           {"Content-Type" "application/edn"
+                                                  "Accept"       "application/edn"}
+                              :edn-params        {:eid 1 :selector [:name]} ;; !!!! Does not work if selector is a string
+                              }))]
+        (println "resp???????????: "  d)
+        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
+        {:datoms/id -1})))
+
+
+
+
+
+
 
 
 (defmutation update-datoms
-  "Client Mutation: Replaces the vector which contains all the datoms"
-  [{:datoms/keys [datom]}]
+             "Client Mutation: Replaces the vector which contains all the datoms"
+             [{:datoms/keys [datom]}]
   (action [{:keys [state]}]
     ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
     ;;(println (vals value))
@@ -78,7 +113,7 @@
 
 
 
-(def mutations [transact-datoms])
+(def mutations [transact-datoms pull-query])
 
 
 
@@ -92,5 +127,17 @@
                               }))]
         (println d)))
 
+
+  (go (let [d (<! (http/post "http://localhost:3000/pull"
+                    {:with-credentials? false
+                     :headers           {"Content-Type" "application/edn"
+                                         "Accept"       "application/edn"}
+                     :edn-params        {:eid 1
+                                         ;;[[:db/add -1 :player/name "IIIIvanooooo"]]
+                                         :selector [:name]}
+                              }))]
+        (println "resp: " (:body d))
+        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
+        {:datoms/id -1}))
 
   )

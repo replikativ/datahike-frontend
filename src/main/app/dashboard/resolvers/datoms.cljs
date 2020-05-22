@@ -18,7 +18,14 @@
       {:the-datoms {:datoms/id       :the-datoms
                     :datoms/elements (:body r)}})))
 
-(def resolvers [datoms-resolver])
+
+(defresolver query-input-resolver [env input]
+  {::pc/output [{:the-query-input [:query-input/id :query-input/entity-id :query-input/selector]}]}
+             {:the-query-input {:query-input/id :the-query-input
+                                :query-input/entity-id 1
+                                :query-input/selector "[:name]"}})
+
+(def resolvers [datoms-resolver query-input-resolver])
 
 
 

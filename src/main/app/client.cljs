@@ -4,6 +4,7 @@
     [app.ui.root :as root]
     [app.dashboard.ui.queries.datoms :as dui]
     [app.dashboard.ui.queries.schema :as sui]
+    [app.dashboard.ui.queries.query-input :as qui]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.networking.http-remote :as net]
     [com.fulcrologic.fulcro.data-fetch :as df]
@@ -34,7 +35,8 @@
      :actor/current-session root/Session})
   (app/mount! SPA root/Root "app" {:initialize-state? false})
   (df/load! SPA :the-schema sui/Schema {:remote :rest-remote})
-  (df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote}))
+  (df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
+  (df/load! SPA :the-query-input qui/QueryInput {:remote :rest-remote}))
 
 (comment
   (inspect/app-started! SPA)
