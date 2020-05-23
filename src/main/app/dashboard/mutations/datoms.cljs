@@ -15,8 +15,6 @@
   "Submits the query entered manually by user"
   [{:query-input/keys [entity-id selector]}]
   (action [{:keys [state]}]
-    ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
-    ;;(println (vals value))
     ;;(p/pprint #_@state)
     (println "In 'submit-query-input: Entity-id is int: " (type entity-id) "// selector is vector?: " (vector? selector))
     #_(swap! state
@@ -34,6 +32,7 @@
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
+    (assert (and  (int? entity-id) (vector? selector)))
     (eql/query->ast1 `[(pull-query  ~{:query-input/entity-id entity-id
                                       :query-input/selector selector}
                          )])))
