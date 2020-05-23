@@ -4,6 +4,7 @@
    [com.fulcrologic.fulcro.mutations :as m]
    [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
    [app.dashboard.mutations.datoms :as dm]
+   [cljs.reader :as reader]
    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody textarea form label]]
    ))
 
@@ -19,17 +20,30 @@
   (div "Pull Query:"
     (div
       (label "Entity id:"
-        (textarea {:value (str entity-id)
-                   :onChange #(m/set-string! this :query-input/entity-id :event %)})))
+        (textarea {:value    (str entity-id)
+                   :onChange (fn [event]
+                               (println "---->" (type event))
+                               (m/set-string! this :query-input/entity-id :event event))})))
     (div
       (label "Selector:"
         (textarea {:value selector
                    :onChange #(m/set-string! this :query-input/selector :event %)})))
 
     (div
-      (println "entity-id " entity-id)
-      (button {:onClick #(comp/transact! this `[(dm/submit-query-input {:query-input/selector selector
-                                                                        :query-input/entity-id entity-id})])}
-        "Submit"))))
+      (println "entity-id "  entity-id  "type: " (type entity-id))
+      (println "Selector: " selector)
+      (button {:onClick
+               (fn []
+                 (println "after submit: entity-id " (type entity-id))
+                 (println "after submit: Selector: " selector)
+                 (comp/transact! this [(dm/submit-query-input
+                                               ;; TODO TODO TODO: !!!!!! STOP using read-string as it is a huge security risk!
+                                         {:query-input/selector (reader/read-string selector)
+                                          ;; WEIRD: sometimes noticing that entity-id is no longer a Number but becomes a String when system reaches this point.
+                                          :query-input/entity-id (if (int? entity-id)
+                                                                   entity-id
+                                                                   (reader/read-string entity-id))
+                                          })]))}
+              "Submit"))))
 
 (def ui-query-input (comp/factory QueryInput))

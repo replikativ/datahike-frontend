@@ -18,9 +18,8 @@
     ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
     ;;(println (vals value))
     ;;(p/pprint #_@state)
-    (println "entity-id********: " entity-id "// ssssselector: " selector)
-
-    (swap! state
+    (println "In 'submit-query-input: Entity-id is int: " (type entity-id) "// selector is vector?: " (vector? selector))
+    #_(swap! state
       (fn [s]
         (-> s
           (merge/merge-ident [:datoms/id :the-datoms]
@@ -28,7 +27,6 @@
              :datoms/elements (into [[0 :name "joe"]]
                                 (get-in @state [:datoms/id :the-datoms
                                                 :datoms/elements]))}))))
-
     )
 
   (ok-action [env]
@@ -36,27 +34,27 @@
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
-    ;;(println "....................in Fulcro mutation:")
-    (eql/query->ast1 `[(pull-query  {:query-input/entity-id ~entity-id
-                                     :query-input/selector ~selector}
-                         )])
-    ))
+    (eql/query->ast1 `[(pull-query  ~{:query-input/entity-id entity-id
+                                      :query-input/selector selector}
+                         )])))
 
 
 (pc/defmutation pull-query [env {:query-input/keys [entity-id selector]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/entity-id :query-input/selector] 
    ::pc/output [:datoms/id]}
-  (log/info (str "In pathom-mutations - pull: --- " entity-id " --- " selector ))
-  (go (let [d (<! (http/post "http://localhost:3000/pull"
-                             {:with-credentials? false
-                              :headers           {"Content-Type" "application/edn"
-                                                  "Accept"       "application/edn"}
-                              :edn-params        {:eid 1 :selector [:name]} ;; !!!! Does not work if selector is a string
-                              }))]
-        (println "resp???????????: "  d)
-        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
-        {:datoms/id -1})))
+  (log/info (str "In pathom-mutations - pull4: -------------- " entity-id " --- " selector ))
+                (go (let [d (<! (http/post "http://localhost:3000/pull"
+                                             {:with-credentials? false
+                                              :headers           {"Content-Type" "application/edn"
+                                                                  "Accept"       "application/edn"}
+                                              ;;:edn-params        {:eid 1 :selector [:name]} ;; !!!! Does not work if selector is a string (as we are using EDN selector can and should be a vector).
+                                              :edn-params        {:eid entity-id :selector selector}
+                                              }))]
+                      (println "resp???????????: " (type (:body d)))
+                      (println "resp???????????: " (:body d))
+                        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
+                        {:datoms/id -1})))
 
 
 
