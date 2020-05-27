@@ -13,7 +13,7 @@
 
 (defmutation submit-query-input
   "Submits the query entered manually by user"
-  [{:query-input/keys [entity-id selector]}]
+  [{:query-input/keys [entity-id selector target-comp]}]
   (action [{:keys [state]}]
     ;;(p/pprint #_@state)
     (println "In 'submit-query-input: Entity-id is int: " (type entity-id) "// selector is vector?: " (vector? selector))
@@ -28,32 +28,52 @@
     )
 
   (ok-action [env]
-    (log/info "OK action"))
+             ;; (log/info "OK action")
+             (cljs.pprint/pprint env)
+
+             #_(swap! (:state env)
+        (fn [s]
+          (-> s
+            (merge/merge-ident [:datoms/id :the-datoms]
+              {:datoms/id       :the-datoms
+               :datoms/elements [[1 :name "Testttt-ok"]]}))))
+    )
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
     (assert (and  (int? entity-id) (vector? selector)))
-    (eql/query->ast1 `[(pull-query  ~{:query-input/entity-id entity-id
-                                      :query-input/selector selector}
-                         )])))
+    (-> env
+      (m/with-server-side-mutation `pull-query)
+      (m/with-params {:query-input/entity-id entity-id
+                      :query-input/selector selector})
+      (m/returning target-comp))
+    #_(eql/query->ast1 `[{(pull-query  ~{:query-input/entity-id entity-id
+                                       :query-input/selector selector})
+                        [:datoms/id :datoms/elements]}
+                       ])))
 
 
 (pc/defmutation pull-query [env {:query-input/keys [entity-id selector]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/entity-id :query-input/selector] 
-   ::pc/output [:datoms/id]}
+   ::pc/output [:datoms/id :datoms/elements]}
   (log/info (str "In pathom-mutations - pull4: -------------- " entity-id " --- " selector ))
-                (go (let [d (<! (http/post "http://localhost:3000/pull"
-                                             {:with-credentials? false
-                                              :headers           {"Content-Type" "application/edn"
-                                                                  "Accept"       "application/edn"}
-                                              ;;:edn-params        {:eid 1 :selector [:name]} ;; !!!! Does not work if selector is a string (as we are using EDN selector can and should be a vector).
-                                              :edn-params        {:eid entity-id :selector selector}
-                                              }))]
-                      (println "resp???????????: " (type (:body d)))
-                      (println "resp???????????: " (:body d))
-                        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
-                        {:datoms/id -1})))
+  #_(go (let [d (<! (http/post "http://localhost:3000/pull"
+                    {:with-credentials? false
+                     :headers           {"Content-Type" "application/edn"
+                                         "Accept"       "application/edn"}
+                     ;;:edn-params        {:eid 1 :selector [:name]} ;; !!!! Does not work if selector is a string (as we are using EDN selector can and should be a vector).
+                     :edn-params        {:eid entity-id :selector selector}
+                     }))]
+        ;; (println "resp???????????: " (type (:body d)))
+        (println "resp???????????: " (:body d))
+        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
+        {:datoms/id       :the-datoms
+         :datoms/elements [[12 :name "Test-okkkkk"]]}
+        ))
+
+  {:datoms/id       :the-datoms
+         :datoms/elements [[12 :name "Test-okkkkk"]]})
 
 
 
