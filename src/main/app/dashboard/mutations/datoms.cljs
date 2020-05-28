@@ -57,23 +57,17 @@
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/entity-id :query-input/selector] 
    ::pc/output [:datoms/id :datoms/elements]}
+  (assert (and  (int? entity-id) (vector? selector)))
   (log/info (str "In pathom-mutations - pull4: -------------- " entity-id " --- " selector ))
-  #_(go (let [d (<! (http/post "http://localhost:3000/pull"
+  (go (let [d (<! (http/post "http://localhost:3000/pull"
                     {:with-credentials? false
                      :headers           {"Content-Type" "application/edn"
                                          "Accept"       "application/edn"}
-                     ;;:edn-params        {:eid 1 :selector [:name]} ;; !!!! Does not work if selector is a string (as we are using EDN selector can and should be a vector).
                      :edn-params        {:eid entity-id :selector selector}
                      }))]
-        ;; (println "resp???????????: " (type (:body d)))
         (println "resp???????????: " (:body d))
-        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
         {:datoms/id       :the-datoms
-         :datoms/elements [[12 :name "Test-okkkkk"]]}
-        ))
-
-  {:datoms/id       :the-datoms
-         :datoms/elements [[12 :name "Test-okkkkk"]]})
+         :datoms/elements [(vec (flatten (into [entity-id] (:body d))))]})))
 
 
 
