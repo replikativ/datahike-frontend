@@ -8,6 +8,7 @@
    [com.fulcrologic.fulcro.algorithms.merge :as merge]
    [edn-query-language.core :as eql]
    [cljs-http.client :as http]
+   [cljs.reader :as reader]
    [cljs.core.async :refer [<!]]
    [com.fulcrologic.fulcro.algorithms.data-targeting :as targeting]))
 
@@ -21,7 +22,7 @@
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
-    (println "in rest-remote" )
+    (println "in rest-remote" (type selector) )
     (-> env
       (m/with-server-side-mutation `a-pull-query)
       (m/with-params {:query-input/entity-id entity-id
@@ -33,14 +34,14 @@
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/entity-id :query-input/selector] 
    ::pc/output [:datoms/id :datoms/elements]}
-  (assert (and  (int? entity-id) (vector? selector)))
   (log/info (str "In pathom-mutations: -------------- " entity-id " --- " selector ))
   (go (let [r        (:body (<! (http/post "http://localhost:3000/q"
                                   {:with-credentials? false
                                    :headers           {"Content-Type" "application/edn"
                                                        "Accept"       "application/edn"}
-                                   :edn-params        {:query `[:find ~entity-id
-                                                                :where ~selector]}}))) ;; [?e :name "IVan"]
+                                   ;; TODO TODO TODO: !!!!!! Possible Injection attack here or not?
+                                   :edn-params        {:query `[:find ~(reader/read-string entity-id)
+                                                                :where ~(reader/read-string  selector)]}})) ) ;; [?e :name "IVan"]
             to_datoms (fn [[entity]]
                         (let [eid (:db/id entity)]
                           (vec (map (fn [[attr val]]
@@ -50,7 +51,7 @@
         {:datoms/id       :the-datoms
          :datoms/elements (cond
                             (vector? r) (to_datoms r)
-                            (set? r) (reduce into (map to_datoms r)))})))
+                            (set? r) (reduce into (map to_datoms r)))}))) 
 
 
 

@@ -5,7 +5,6 @@
    [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody label textarea]]
    [com.fulcrologic.fulcro.mutations :as m]
-   [cljs.reader :as reader]
    ["material-table" :default MaterialTable]))
 
 
@@ -27,6 +26,7 @@
                                    (m/set-string! this :query-input/entity-id :event event))})))
     (div
       (label "Where:"
+        ;; TODO BUG:  a simple paste into the field is not considered a change to the field so the fields is still seen as empty => crash
         (textarea {:value selector
                    :onChange #(m/set-string! this :query-input/selector :event %)})))
 
@@ -39,10 +39,8 @@
                  (println "after submit: entity-id " (type entity-id))
                  (println "after submit: Selector: " selector)
                  (comp/transact! this [(dm/submit-query-input
-                                         ;; TODO TODO TODO: !!!!!! STOP using read-string as it is a huge security risk!
                                          {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
                                           :query-input/selector selector
-                                          ;; WEIRD: sometimes noticing that entity-id is no longer a Number but becomes a String when system reaches this point.
                                           :query-input/entity-id  "[(pull ?e [*])]"})
                                        (comp/get-query Datoms)]))}
         "Query!"))))
