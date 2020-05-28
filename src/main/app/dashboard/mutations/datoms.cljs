@@ -15,38 +15,38 @@
   "Submits the query entered manually by user"
   [{:query-input/keys [entity-id selector target-comp]}]
   (action [{:keys [state]}]
-    (p/pprint #_@state))
+    (p/pprint "hello" #_@state))
   (ok-action [env]
     (log/info "OK action"))
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
+    (println "in rest-remote" )
     (-> env
-      (m/with-server-side-mutation `query)
+      (m/with-server-side-mutation `a-pull-query)
       (m/with-params {:query-input/entity-id entity-id
                       :query-input/selector selector})
       (m/returning target-comp))))
 
 
-(pc/defmutation query [env {:query-input/keys [entity-id selector]}]
+(pc/defmutation a-pull-query [env {:query-input/keys [entity-id selector]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/entity-id :query-input/selector] 
    ::pc/output [:datoms/id :datoms/elements]}
   (assert (and  (int? entity-id) (vector? selector)))
-  ;;(log/info (str "In pathom-mutations: -------------- " entity-id " --- " selector ))
+  (log/info (str "In pathom-mutations: -------------- " entity-id " --- " selector ))
   (go (let [r        (:body (<! (http/post "http://localhost:3000/q"
                                   {:with-credentials? false
                                    :headers           {"Content-Type" "application/edn"
                                                        "Accept"       "application/edn"}
-                                   :edn-params        {:query '[:find [(pull ?e [*])]
-                                                                :where [?e :name "IVan"]
-                                                                ]}})))
+                                   :edn-params        {:query `[:find ~entity-id
+                                                                :where ~selector]}}))) ;; [?e :name "IVan"]
             to_datoms (fn [[entity]]
                         (let [eid (:db/id entity)]
                           (vec (map (fn [[attr val]]
                                       [eid attr val])
                                  entity))))]
-        ;;(println "response: " r)
+        (println "response: " r)
         {:datoms/id       :the-datoms
          :datoms/elements (cond
                             (vector? r) (to_datoms r)
@@ -105,7 +105,7 @@
 
 
 
-(def mutations [transact-datoms query])
+(def mutations [transact-datoms a-pull-query])
 
 
 
