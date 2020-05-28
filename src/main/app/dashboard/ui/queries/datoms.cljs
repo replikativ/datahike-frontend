@@ -11,6 +11,9 @@
 (declare Datoms)
 
 ;; For /q
+;;
+;;TODO: Rename entity-id
+;;TODO: rename 'selector
 (defsc QueryInput [this {:query-input/keys [id entity-id selector] :as props}]
   {:query [:query-input/id :query-input/entity-id :query-input/selector]
    :initial-state (fn [_] {:query-input/id      ":query-input-init-state"
@@ -20,6 +23,7 @@
   (div
     (div
       (label "Pull expr:"
+        ;; TODO: try to use this same string set in the resolver
         (textarea {:value    "[(pull ?e [*])]"
                    #_:onChange #_(fn [event]
                                    (println "---->" (type event))
@@ -41,6 +45,7 @@
                  (comp/transact! this [(dm/submit-query-input
                                          {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
                                           :query-input/selector selector
+                                          ;; TODO: use the var entity-id here once we use this same string set in the resolver
                                           :query-input/entity-id  "[(pull ?e [*])]"})
                                        (comp/get-query Datoms)]))}
         "Query!"))))
