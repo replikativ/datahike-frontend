@@ -15,59 +15,42 @@
   "Submits the query entered manually by user"
   [{:query-input/keys [entity-id selector target-comp]}]
   (action [{:keys [state]}]
-    ;;(p/pprint #_@state)
-    (println "In 'submit-query-input: Entity-id is int: " (type entity-id) "// selector is vector?: " (vector? selector))
-    #_(swap! state
-      (fn [s]
-        (-> s
-          (merge/merge-ident [:datoms/id :the-datoms]
-            {:datoms/id       :the-datoms
-             :datoms/elements (into [[0 :name "joe"]]
-                                (get-in @state [:datoms/id :the-datoms
-                                                :datoms/elements]))}))))
-    )
-
+    (p/pprint #_@state))
   (ok-action [env]
-             ;; (log/info "OK action")
-             (cljs.pprint/pprint env)
-
-             #_(swap! (:state env)
-        (fn [s]
-          (-> s
-            (merge/merge-ident [:datoms/id :the-datoms]
-              {:datoms/id       :the-datoms
-               :datoms/elements [[1 :name "Testttt-ok"]]}))))
-    )
+    (log/info "OK action"))
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
-    (assert (and  (int? entity-id) (vector? selector)))
     (-> env
-      (m/with-server-side-mutation `pull-query)
+      (m/with-server-side-mutation `query)
       (m/with-params {:query-input/entity-id entity-id
                       :query-input/selector selector})
-      (m/returning target-comp))
-    #_(eql/query->ast1 `[{(pull-query  ~{:query-input/entity-id entity-id
-                                       :query-input/selector selector})
-                        [:datoms/id :datoms/elements]}
-                       ])))
+      (m/returning target-comp))))
 
 
-(pc/defmutation pull-query [env {:query-input/keys [entity-id selector]}]
+(pc/defmutation query [env {:query-input/keys [entity-id selector]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/entity-id :query-input/selector] 
    ::pc/output [:datoms/id :datoms/elements]}
   (assert (and  (int? entity-id) (vector? selector)))
-  (log/info (str "In pathom-mutations - pull4: -------------- " entity-id " --- " selector ))
-  (go (let [d (<! (http/post "http://localhost:3000/pull"
-                    {:with-credentials? false
-                     :headers           {"Content-Type" "application/edn"
-                                         "Accept"       "application/edn"}
-                     :edn-params        {:eid entity-id :selector selector}
-                     }))]
-        (println "resp???????????: " (:body d))
+  ;;(log/info (str "In pathom-mutations: -------------- " entity-id " --- " selector ))
+  (go (let [r        (:body (<! (http/post "http://localhost:3000/q"
+                                  {:with-credentials? false
+                                   :headers           {"Content-Type" "application/edn"
+                                                       "Accept"       "application/edn"}
+                                   :edn-params        {:query '[:find [(pull ?e [*])]
+                                                                :where [?e :name "IVan"]
+                                                                ]}})))
+            to_datoms (fn [[entity]]
+                        (let [eid (:db/id entity)]
+                          (vec (map (fn [[attr val]]
+                                      [eid attr val])
+                                 entity))))]
+        ;;(println "response: " r)
         {:datoms/id       :the-datoms
-         :datoms/elements [(vec (flatten (into [entity-id] (:body d))))]})))
+         :datoms/elements (cond
+                            (vector? r) (to_datoms r)
+                            (set? r) (reduce into (map to_datoms r)))})))
 
 
 
@@ -77,13 +60,13 @@
 
 
 (defmutation update-datoms
-             "Client Mutation: Replaces the vector which contains all the datoms"
-             [{:datoms/keys [datom]}]
+  "Client Mutation: Replaces the vector which contains all the datoms"
+  [{:datoms/keys [datom]}]
   (action [{:keys [state]}]
     ;;(log/info "Replacing datoms with"  value) ;; Prints the clj object in a weird way sometimes
     ;;(println (vals value))
     ;;(p/pprint #_@state)
-(println "datom: " datom)
+    (println "datom: " datom)
 
     (swap! state
       (fn [s]
@@ -98,7 +81,7 @@
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
-      ;;(println "in Fulcro mutation: datom: " (type datom))
+    ;;(println "in Fulcro mutation: datom: " (type datom))
     (eql/query->ast1 `[(transact-datoms {:datoms/my-datom ~datom})])))
 
 
@@ -109,14 +92,12 @@
    ::pc/params [:datoms/my-datom]
    ::pc/output [:datoms/id]}
   (log/info (str "In client-mutations - transact-datoms: --- " (coll? my-datom) "---" ))
-  (go (let [d (<! (http/post "http://localhost:3000/transact"
+  (go (let [d (<! (http/post "http://localhost:3000/q"
                     {:with-credentials? false
                      :headers           {"Content-Type" "application/edn"
                                          "Accept"       "application/edn"}
                      :edn-params        {:tx-data [my-datom]
-                                         ;;[[:db/add -1 :player/name "IIIIvanooooo"]]
-                                         :tx-meta []}
-                              }))]
+                                         :tx-meta []}                                       }))]
         (println "resp: " (:body d))
         (println "my good datom: " my-datom)
         ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
@@ -124,7 +105,11 @@
 
 
 
-(def mutations [transact-datoms pull-query])
+(def mutations [transact-datoms query])
+
+
+
+
 
 
 
@@ -133,7 +118,7 @@
                              {:with-credentials? false
                               :headers           {"Content-Type" "application/edn"
                                                   "Accept"       "application/edn"}
-                              :edn-params        {:tx-data [[:db/add -1 :player/name "IIIIvano"]]
+                              :edn-params        {:tx-data [[:db/add 1 :player/event "Genf"]]
                                                   :tx-meta []}
                               }))]
         (println d)))
@@ -150,5 +135,18 @@
         (println "resp: " (:body d))
         ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
         {:datoms/id -1}))
+
+
+  (def entity [{:db/id 2 :age 25 :name "Ivan"}])
+  (def entities #{[{:db/id 2 :age 25 :name "Ivan"}] [{:db/id 1 :age 44 :name "Petr"}]})
+
+
+  (defn to_datoms [[entity]]
+    (let [eid (:db/id entity)]
+      (vec (map (fn [[attr val]] [eid attr val]) entity))))
+
+  (to_datoms entity)
+
+  (reduce into (map to_datoms entities))
 
   )
