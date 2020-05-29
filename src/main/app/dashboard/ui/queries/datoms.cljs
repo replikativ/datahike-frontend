@@ -51,45 +51,6 @@
                                        (comp/get-query Datoms)]))}
         "Query!"))))
 
-
-;; When used for pull-query (i.e. with eid and selector to be entered by user
-#_(defsc QueryInput [this {:query-input/keys [id entity-id selector] :as props}]
-  {:query [:query-input/id :query-input/entity-id :query-input/selector]
-   :initial-state (fn [_] {:query-input/id      ":query-input-init-state"
-                           :query-input/selector "[:name]"
-                           :query-input/entity-id  "1"})
-   :ident         (fn [] [:query-input/id :the-query-input])}
-  (div "Pull Query:"
-    (div
-      (label "Entity id:"
-        (textarea {:value    (str entity-id)
-                   :onChange (fn [event]
-                               (println "---->" (type event))
-                               (m/set-string! this :query-input/entity-id :event event))})))
-    (div
-      (label "Selector:"
-        (textarea {:value selector
-                   :onChange #(m/set-string! this :query-input/selector :event %)})))
-
-    (div
-      (println "entity-id "  entity-id  "type: " (type entity-id))
-      (println "Selector: " selector)
-      (button {:onClick
-               (fn []
-                 (println "after submit: entity-id " (type entity-id))
-                 (println "after submit: Selector: " selector)
-                 (comp/transact! this [(dm/submit-query-input
-                                         ;; TODO TODO TODO: !!!!!! STOP using read-string as it is a huge security risk!
-                                         {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
-                                          :query-input/selector (reader/read-string selector)
-                                          ;; WEIRD: sometimes noticing that entity-id is no longer a Number but becomes a String when system reaches this point.
-                                          :query-input/entity-id (if (int? entity-id)
-                                                                   entity-id
-                                                                   (reader/read-string entity-id))
-                                          })
-                                       (comp/get-query Datoms)]))}
-        "Query!"))))
-
 (def ui-query-input (comp/factory QueryInput))
 
 

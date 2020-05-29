@@ -16,7 +16,12 @@
                    :transit-params {:index :eavt}}))]
       ;;(println r)
       {:the-datoms {:datoms/id       :the-datoms
-                    :datoms/elements (:body r)}})))
+                    :datoms/elements (mapv (fn [d] [{:id             (first d)
+                                                    :value          (nth d 1)
+                                                    :attribute      (nth d 2)
+                                                    :transaction-id (nth d 3)
+                                                    :added          (nth d 4)}])
+                                          (:body r))}})))
 
 
 (defresolver query-input-resolver [env input]
@@ -52,7 +57,12 @@
                              "Accept"       "application/transit+json"}
                    :transit-params {:index :eavt}
                    }))]
-      (println r)
+      (println (map (fn [d] {:id (first d)
+                                   :value (nth d 1)
+                                   :attribute (nth d 2)
+                                   :transaction-id (nth d 3)
+                                   :added (nth d 4)})
+                          (:body r)))
       ))
 
   )
