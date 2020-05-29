@@ -30,6 +30,7 @@
       (m/returning target-comp))))
 
 
+;;TODO: rename to 'query
 (pc/defmutation a-pull-query [env {:query-input/keys [entity-id selector]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/entity-id :query-input/selector] 
@@ -41,7 +42,7 @@
                                                        "Accept"       "application/edn"}
                                    ;; TODO TODO TODO: !!!!!! Possible Injection attack here or not?
                                    :edn-params        {:query `[:find ~(reader/read-string entity-id)
-                                                                :where ~(reader/read-string  selector)]}})) ) ;; [?e :name "IVan"]
+                                                                :where ~(reader/read-string  selector)]}}))) ;; [?e :name "IVan"]
             to_datoms (fn [[entity]]
                         (let [eid (:db/id entity)]
                           (vec (map (fn [[attr val]]
@@ -50,8 +51,11 @@
         (println "response: " r)
         {:datoms/id       :the-datoms
          :datoms/elements (cond
+                            (vector? r)  #{r}
+                            (set? r)     r)
+         #_(cond
                             (vector? r) (to_datoms r)
-                            (set? r) (reduce into (map to_datoms r)))}))) 
+                            (set? r) (reduce into (map to_datoms r)))})))
 
 
 

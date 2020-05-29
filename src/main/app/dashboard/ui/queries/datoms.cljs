@@ -44,7 +44,8 @@
                  (println "after submit: Selector: " selector)
                  (comp/transact! this [(dm/submit-query-input
                                          {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
-                                          :query-input/selector selector
+                                          ;; TODO restore 'selector
+                                          :query-input/selector "[?e :name \"IVan\"]" ;; selector
                                           ;; TODO: use the var entity-id here once we use this same string set in the resolver
                                           :query-input/entity-id  "[(pull ?e [*])]"})
                                        (comp/get-query Datoms)]))}
@@ -103,38 +104,46 @@
                            :datoms/elements {}})
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
-  (div
-    (ui-query-input)
-    (mtable
-      {:title    "Datoms"
-       :columns  [
-                  {:title "Entity" :field :entity}
-                  {:title "Attributes" :field :attributes}
-                  {:title "Value" :field :value}
-                  {:title "Transac. id" :field :tr_id}
-                  {:title "Added" :field :added}]
+  ;;(println "%%%%%%%%% elements: " elements)
+  (let [columns (reduce into (map #(into #{} (keys (first %))) elements))]
+    ;;(println "***** Columns: " columns)
+    (div
+      (ui-query-input)
+      (mtable
+        {:title    "Datoms"
+         :columns  (mapv (fn [c] {:title c :field c}) columns)
 
-       :data     (map (fn [datom] {:entity     (first datom)
-                                   :attributes (str (nth datom 1))
-                                   :value      (nth datom 2)
-                                   :tr_id      (if (> (count datom) 3) (nth datom 3) "")
-                                   :added      (if (> (count datom) 4) (nth datom 4) "")
-                                   })
-                   elements)
+         :data     (mapv first elements)
 
-       :editable {:onRowAdd    (fn [newData]
-                                 (do
-                                   (comp/transact! this
-                                     [(dm/update-datoms {:datoms/datom (into [:db/add]
-                                                                         (vec (vals (js->clj newData))))})])
-                                   (js/Promise.resolve newData)
-                                   ))
+         :editable {:onRowAdd    (fn [newData]
+                                   (do
+                                     (comp/transact! this
+                                       [(dm/update-datoms {:datoms/datom (into [:db/add]
+                                                                           (vec (vals (js->clj newData))))})])
+                                     (js/Promise.resolve newData)
+                                     ))
 
-                  :onRowUpdate (fn [newData, oldData]
-                                 (do
-                                   ;; do the defmutation here
-                                   (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
-                                   (js/Promise.resolve newData)))
-                  :onRowDelete id}})))
+                    :onRowUpdate (fn [newData, oldData]
+                                   (do
+                                     ;; do the defmutation here
+                                     (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
+                                     (js/Promise.resolve newData)))
+                    :onRowDelete id}}))))
 
 (def ui-datoms (comp/factory Datoms))
+
+
+
+
+(comment
+  (def entity [{:db/id 2 :age 25 :name "Ivan"}])
+  (def entities #{[{:db/id 2 :age 25 :name "Ivan"}] [{:db/id 1 :age 44 :name "Petr"}] [{:db/id 3 :player/age 44 :player/event "Petr"}]})
+
+  (def columns (reduce into (map #(into #{} (keys (first %))) entities)))
+
+  columns
+  (mapv (fn [c] {:title c :field c}) columns)
+
+  (into #{1 2} (set (keys (first entity))))
+
+  )
