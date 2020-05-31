@@ -3,6 +3,7 @@
             [nubank.workspaces.core :as ws]
             [nubank.workspaces.card-types.fulcro3 :as ct.fulcro]
             [com.fulcrologic.fulcro.mutations :as fm]
+            [app.dashboard.ui.queries.datoms :as d]
             [com.fulcrologic.fulcro.dom :as dom]))
 
 (fp/defsc FulcroDemo
@@ -17,4 +18,10 @@
 (ws/defcard fulcro-demo-card
   (ct.fulcro/fulcro-card
     {::ct.fulcro/root       FulcroDemo
+     ::ct.fulcro/wrap-root? true}))
+
+
+(ws/defcard fulcro-demo-card
+  (ct.fulcro/fulcro-card
+    {::ct.fulcro/root   d/Datoms
      ::ct.fulcro/wrap-root? true}))
