@@ -65,7 +65,9 @@
                            :datoms/elements {}})
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
-  ;;(println "%%%%%%%%% elements: " elements)
+  ;; Expects: [[{:id 1, :attribute :age, :value 31, :transac-id 536870961, :added true}]
+  ;; [{:id 1, :attribute :name, :value Ivanov, :transac-id 536870961, :added true}]]
+  (println "%%%%%%%%% elements: " elements)
   (let [columns (reduce into (map #(into #{} (keys (first %))) elements))]
     ;;(println "***** Columns: " columns)
     (div
