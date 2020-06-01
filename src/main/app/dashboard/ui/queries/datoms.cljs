@@ -60,10 +60,12 @@
 (def mtable (interop/react-factory MaterialTable))
 
 
-(defsc Datoms [this {:datoms/keys [id elements] :as props}]
-  {:query [:datoms/id :datoms/elements]
+(defsc Datoms [this {:datoms/keys [id elements query-input] :as props}]
+  {:query [:datoms/id :datoms/elements
+           {:datoms/query-input (comp/get-query QueryInput)}]
    :initial-state (fn [_] {:datoms/id      ":datoms-init-state"
-                           :datoms/elements {}})
+                           :datoms/elements {}
+                           :datoms/query-input (comp/get-initial-state QueryInput)})
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
   ;; Expects: [[{:id 1, :attribute :age, :value 31, :transac-id 536870961, :added true}]
@@ -72,7 +74,7 @@
   (let [columns (reduce into (map #(into #{} (keys (first %))) elements))]
     ;;(println "***** Columns: " columns)
     (div
-      (ui-query-input)
+      (ui-query-input query-input)
       (mtable
         {:title    "Datoms"
          ;; TODO: BUGS: keywords lose their namespace component
