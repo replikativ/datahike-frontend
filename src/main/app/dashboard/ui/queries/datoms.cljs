@@ -32,7 +32,7 @@
     (div
       (label "Where:"
         (let [set-string! #(m/set-string! this :query-input/where-expr :event %)]
-          (textarea {:value where-expr
+          (textarea {:value (or where-expr "[?e _ _]")
                      :onPaste set-string!
                      :onChange set-string!}))))
 
