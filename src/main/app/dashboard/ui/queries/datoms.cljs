@@ -61,13 +61,13 @@
 ;; May be use below function to check whether val is #inst and convert it to string.
 
 ;; Adapts answers such as: #{[{:db/id 10, :player/event [{:db/id 7} {:db/id 8} {:db/id 11}], :player/name Paul, :player/team [{:db/id 11} {:db/id 12}]}]}
-(defn- vec-vals-to-str
-  "In map m, replaces vals that are vectors by the corresponding string"
+(defn- non-number-vals-to-str
+  "In map m, replaces vals that are not numbers by the corresponding string. I.e. vectors would simply be their string representations."
   [m]
   (let [map-vals (fn [f m]
                    (into {} (map (juxt key (comp f val))) m))
         vec-to-str (fn [val]
-                     (if (vector? val) (str val) val))]
+                     (if (number? val) val (str val)))]
     (map-vals vec-to-str m)))
 
 
@@ -94,7 +94,7 @@
          ;; TODO: BUGS: keywords lose their namespace component
          :data     (if (empty? (first elements))
                      []
-                     (mapv vec-vals-to-str (mapv first elements)))
+                     (mapv non-number-vals-to-str (mapv first elements)))
 
          :editable {:onRowAdd    (fn [newData]
                                    (do
