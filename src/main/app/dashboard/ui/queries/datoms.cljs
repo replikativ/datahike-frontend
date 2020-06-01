@@ -55,6 +55,10 @@
 
 (def mtable (interop/react-factory MaterialTable))
 
+;; TODO: look of QueryInput
+
+;;TODO BUG: when receiveing #{[{:db/id 536870926, :db/txInstant #inst "2020-05-20T15:08:38.020-00:00"}]}
+;; May be use below function to check whether val is #inst and convert it to string.
 
 ;; Adapts answers such as: #{[{:db/id 10, :player/event [{:db/id 7} {:db/id 8} {:db/id 11}], :player/name Paul, :player/team [{:db/id 11} {:db/id 12}]}]}
 (defn- vec-vals-to-str
@@ -65,6 +69,7 @@
         vec-to-str (fn [val]
                      (if (vector? val) (str val) val))]
     (map-vals vec-to-str m)))
+
 
 
 (defsc Datoms [this {:datoms/keys [id elements query-input] :as props}]
