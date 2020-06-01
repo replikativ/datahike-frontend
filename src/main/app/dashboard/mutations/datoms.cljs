@@ -128,7 +128,6 @@
                                          :where-expr [:name]}
                               }))]
         (println "resp: " (:body d))
-        ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
         {:datoms/id -1}))
 
 
