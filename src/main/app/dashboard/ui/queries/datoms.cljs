@@ -87,12 +87,10 @@
                                      (comp/transact! this
                                        [(dm/update-datoms {:datoms/datom (into [:db/add]
                                                                            (vec (vals (js->clj newData))))})])
-                                     (js/Promise.resolve newData)
-                                     ))
+                                     (js/Promise.resolve newData)))
 
                     :onRowUpdate (fn [newData, oldData]
                                    (do
-                                     ;; do the defmutation here
                                      (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
                                      (js/Promise.resolve newData)))
                     :onRowDelete id}}))))
