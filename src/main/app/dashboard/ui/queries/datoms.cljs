@@ -56,6 +56,17 @@
 (def mtable (interop/react-factory MaterialTable))
 
 
+;; Adapts answers such as: #{[{:db/id 10, :player/event [{:db/id 7} {:db/id 8} {:db/id 11}], :player/name Paul, :player/team [{:db/id 11} {:db/id 12}]}]}
+(defn- vec-vals-to-str
+  "In map m, replaces vals that are vectors by the corresponding string"
+  [m]
+  (let [map-vals (fn [f m]
+                   (into {} (map (juxt key (comp f val))) m))
+        vec-to-str (fn [val]
+                     (if (vector? val) (str val) val))]
+    (map-vals vec-to-str m)))
+
+
 (defsc Datoms [this {:datoms/keys [id elements query-input] :as props}]
   {:query [:datoms/id :datoms/elements
            {:datoms/query-input (comp/get-query QueryInput)}]
@@ -78,7 +89,7 @@
          ;; TODO: BUGS: keywords lose their namespace component
          :data     (if (empty? (first elements))
                      []
-                     (mapv first elements))
+                     (mapv vec-vals-to-str (mapv first elements)))
 
          :editable {:onRowAdd    (fn [newData]
                                    (do
@@ -109,4 +120,16 @@
 
   (into #{1 2} (set (keys (first entity))))
 
+  (def res {:db/id 10, :player/event [{:db/id 7} {:db/id 8} {:db/id 11}], :player/name "Paul", :player/team [{:db/id 11} {:db/id 12}]})
+
+  (defn map-vals
+    "Maps a function over the values of an associative collection."
+    [f m]
+    (into {} (map (juxt key (comp f val))) m))
+
+  (defn vec-to-id
+    [val]
+    (if (vector? val) (str val) val))
+
+  (map-vals vec-to-id res)
   )
