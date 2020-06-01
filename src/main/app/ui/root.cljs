@@ -15,6 +15,7 @@
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
     [app.dashboard.ui.queries.datoms :as dui]
     [app.dashboard.ui.queries.schema :as sui]
+    [com.fulcrologic.fulcro.data-fetch :as df]
     [taoensso.timbre :as log]))
 
 (defn field [{:keys [label valid? error-message] :as props}]
@@ -160,6 +161,7 @@
           (div (dom/a :.item {:classes [(when (= :datoms current-panel) "active")]
                               :onClick (fn []
                                          (println "About to rout to datoms")
+                                         (df/load! this :the-datoms dui/Datoms {:remote :rest-remote})
                                          (dr/change-route this ["main" "datoms"]))} "Datoms"))
           (div (dom/a :.item {:classes [(when (= :schema current-panel) "active")]
                               :onClick (fn []
