@@ -10,6 +10,8 @@
 
 (declare Datoms)
 
+;; TODO: Make datahike-server accept connection from localhost:4000
+
 ;; For /q
 ;;
 ;;TODO: Rename entity-id
@@ -76,7 +78,9 @@
         {:title    "Datoms"
          :columns  (mapv (fn [c] {:title c :field c}) columns)
 
-         :data     (mapv first elements)
+         :data     (if (empty? (first elements))
+                     []
+                     (mapv first elements))
 
          :editable {:onRowAdd    (fn [newData]
                                    (do
