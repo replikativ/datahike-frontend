@@ -166,12 +166,10 @@
           (div (dom/a :.item {:classes [(when (= :schema current-panel) "active")]
                               :onClick (fn []
                                          (println "About to rout to SCHEMA")
-                                         (dr/change-route! this ["main" "schema"]))} "Schema"))
-          ))
+                                         (dr/change-route! this ["main" "schema"]))} "Schema"))))
       (div :.thirteen.wide.column
         (div :.ui.container.segment
-          (ui-main-router router)
-          )))))
+          (ui-main-router router))))))
 
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
