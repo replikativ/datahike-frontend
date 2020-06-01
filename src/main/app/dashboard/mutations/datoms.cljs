@@ -14,7 +14,7 @@
 
 (defmutation submit-query-input
   "Submits the query entered manually by user"
-  [{:query-input/keys [entity-id selector target-comp]}]
+  [{:query-input/keys [pull-expr selector target-comp]}]
   (action [{:keys [state]}]
     (p/pprint "hello" #_@state))
   (ok-action [env]
@@ -25,23 +25,23 @@
     (println "in rest-remote" (type selector) )
     (-> env
       (m/with-server-side-mutation `a-pull-query)
-      (m/with-params {:query-input/entity-id entity-id
+      (m/with-params {:query-input/pull-expr pull-expr
                       :query-input/selector selector})
       (m/returning target-comp))))
 
 
 ;;TODO: rename to 'query
-(pc/defmutation a-pull-query [env {:query-input/keys [entity-id selector]}]
+(pc/defmutation a-pull-query [env {:query-input/keys [pull-expr selector]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
-   ::pc/params [:query-input/entity-id :query-input/selector] 
+   ::pc/params [:query-input/pull-expr :query-input/selector]
    ::pc/output [:datoms/id :datoms/elements]}
-  (log/info (str "In pathom-mutations: -------------- " entity-id " --- " selector ))
+  (log/info (str "In pathom-mutations: -------------- " pull-expr " --- " selector ))
   (go (let [r        (:body (<! (http/post "http://localhost:3000/q"
                                   {:with-credentials? false
                                    :headers           {"Content-Type" "application/edn"
                                                        "Accept"       "application/edn"}
                                    ;; TODO TODO TODO: !!!!!! Possible Injection attack here or not?
-                                   :edn-params        {:query `[:find ~(reader/read-string entity-id)
+                                   :edn-params        {:query `[:find ~(reader/read-string pull-expr)
                                                                 :where ~(reader/read-string  selector)]}}))) ;; [?e :name "IVan"]
             to_datoms (fn [[entity]]
                         (let [eid (:db/id entity)]

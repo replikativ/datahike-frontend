@@ -16,11 +16,11 @@
 ;;
 ;;TODO: Rename entity-id
 ;;TODO: rename 'selector
-(defsc QueryInput [this {:query-input/keys [id entity-id selector] :as props}]
-  {:query [:query-input/id :query-input/entity-id :query-input/selector]
+(defsc QueryInput [this {:query-input/keys [id pull-expr selector] :as props}]
+  {:query [:query-input/id :query-input/pull-expr :query-input/selector]
    :initial-state (fn [_] {:query-input/id      ":query-input-init-state"
                            :query-input/selector "[?e :name 'IVan']"
-                           :query-input/entity-id  "[(pull ?e [*])]"})
+                           :query-input/pull-expr  "[(pull ?e [*])]"})
    :ident         (fn [] [:query-input/id :the-query-input])}
   (div
     (div
@@ -29,7 +29,7 @@
         (textarea {:value    "[(pull ?e [*])]"
                    #_:onChange #_(fn [event]
                                    (println "---->" (type event))
-                                   (m/set-string! this :query-input/entity-id :event event))})))
+                                   (m/set-string! this :query-input/pull-expr :event event))})))
     (div
       (label "Where:"
         (let [set-string! #(m/set-string! this :query-input/selector :event %)]
@@ -38,18 +38,18 @@
                      :onChange set-string!}))))
 
     (div
-      (println "entity-id "  entity-id  "type: " (type entity-id))
+      (println "pull-expr "  pull-expr  "type: " (type pull-expr))
       (println "Selector: " selector)
       (button {:onClick
                (fn []
 
-                 (println "after submit: entity-id " (type entity-id))
+                 (println "after submit: pull-expr " (type pull-expr))
                  (println "after submit: Selector: " selector)
                  (comp/transact! this [(dm/submit-query-input
                                          {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
                                           :query-input/selector selector ;; "[?e :name \"IVan\"]"
-                                          ;; TODO: use the var entity-id here once we use this same string set in the resolver
-                                          :query-input/entity-id  "[(pull ?e [*])]"})
+                                          ;; TODO: use the var pull-expr here once we use this same string set in the resolver
+                                          :query-input/pull-expr  "[(pull ?e [*])]"})
                                        (comp/get-query Datoms)]))}
         "Query!"))))
 
