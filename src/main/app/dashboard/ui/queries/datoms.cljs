@@ -22,10 +22,12 @@
     (div
       (label "Pull expr:"
         ;; TODO: try to use this same string preset in the resolver
-        (textarea {:value    "[(pull ?e [*])]"
-                   #_:onChange #_(fn [event]
-                                   (println "---->" (type event))
-                                   (m/set-string! this :query-input/pull-expr :event event))})))
+        (let [set-string! (fn [event]
+                            (println "---->" (type event))
+                            (m/set-string! this :query-input/pull-expr :event event))]
+          (textarea {:value    (or pull-expr "[(pull ?e [*])]")
+                     :onChange set-string!
+                     :onPaste  set-string!}))))
     (div
       (label "Where:"
         (let [set-string! #(m/set-string! this :query-input/where-expr :event %)]
@@ -44,7 +46,7 @@
                                          {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
                                           :query-input/where-expr where-expr ;; "[?e :name \"IVan\"]"
                                           ;; TODO: use the var pull-expr here once we use this same string set in the resolver
-                                          :query-input/pull-expr  "[(pull ?e [*])]"})
+                                          :query-input/pull-expr pull-expr})
                                        (comp/get-query Datoms)]))}
         "Query!"))))
 
