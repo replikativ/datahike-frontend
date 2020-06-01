@@ -47,8 +47,7 @@
                  (println "after submit: Selector: " selector)
                  (comp/transact! this [(dm/submit-query-input
                                          {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
-                                          ;; TODO restore 'selector
-                                          :query-input/selector "[?e :name \"IVan\"]" ;; selector
+                                          :query-input/selector selector ;; "[?e :name \"IVan\"]"
                                           ;; TODO: use the var entity-id here once we use this same string set in the resolver
                                           :query-input/entity-id  "[(pull ?e [*])]"})
                                        (comp/get-query Datoms)]))}
