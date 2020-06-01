@@ -49,7 +49,9 @@
          :datoms/elements (cond
                             (vector? r)  #{r}
                             (set? r)     r)
-         :datoms/query-input {:query-input/id :the-query-input}})))
+         :datoms/query-input {:query-input/id :the-query-input
+                              :query-input/pull-expr pull-expr
+                              :query-input/where-expr where-expr}})))
 
 
 
