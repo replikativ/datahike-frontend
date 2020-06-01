@@ -22,10 +22,10 @@
 
 
 (defresolver query-input-resolver [env input]
-  {::pc/output [{:the-query-input [:query-input/id :query-input/entity-id :query-input/selector]}]}
+  {::pc/output [{:the-query-input [:query-input/id :query-input/pull-expr :query-input/where-expr]}]}
              {:the-query-input {:query-input/id :the-query-input
-                                :query-input/entity-id "[(pull ?e [*])]"
-                                :query-input/selector "[?e :name \"IVan\"]"}})
+                                :query-input/pull-expr "[(pull ?e [*])]"
+                                :query-input/where-expr "[?e _ _]"}})
 
 (def resolvers [datoms-resolver query-input-resolver])
 
