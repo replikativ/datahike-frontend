@@ -32,9 +32,10 @@
                                    (m/set-string! this :query-input/entity-id :event event))})))
     (div
       (label "Where:"
-        ;; TODO BUG:  a simple paste into the field is not considered a change to the field so the fields is still seen as empty => crash
-        (textarea {:value selector
-                   :onChange #(m/set-string! this :query-input/selector :event %)})))
+        (let [set-string! #(m/set-string! this :query-input/selector :event %)]
+          (textarea {:value selector
+                     :onPaste set-string!
+                     :onChange set-string!}))))
 
     (div
       (println "entity-id "  entity-id  "type: " (type entity-id))
