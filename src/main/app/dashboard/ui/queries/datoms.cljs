@@ -14,7 +14,7 @@
 
 (defsc QueryInput [this {:query-input/keys [id pull-expr where-expr] :as props}]
   {:query [:query-input/id :query-input/pull-expr :query-input/where-expr]
-   :initial-state (fn [_] {:query-input/id      ":query-input-init-state"
+   :initial-state (fn [_] {:query-input/id  :query-input-init-state
                            :query-input/where-expr "[?e :name 'IVan']"
                            :query-input/pull-expr  "[(pull ?e [*])]"})
    :ident         (fn [] [:query-input/id :the-query-input])}

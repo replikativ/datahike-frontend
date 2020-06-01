@@ -35,8 +35,7 @@
   (app/mount! SPA root/Root "app" {:initialize-state? false})
   (df/load! SPA :the-schema sui/Schema {:remote :rest-remote})
   ;; TODO: now that the table shows an entity on ONE row, this needs to be updated
-  (df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
-  (df/load! SPA :the-query-input dui/QueryInput {:remote :rest-remote}))
+  (df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote}))
 
 (comment
   (inspect/app-started! SPA)

@@ -30,7 +30,8 @@
       (m/returning target-comp))))
 
 
-;;TODO: rename to 'query
+;; TODO: rename to 'query
+;; TODO: Can't the body of this mutation be moved into a resolver?
 (pc/defmutation a-pull-query [env {:query-input/keys [pull-expr where-expr]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/pull-expr :query-input/where-expr]
@@ -42,17 +43,13 @@
                                                        "Accept"       "application/edn"}
                                    ;; TODO TODO TODO: !!!!!! Possible Injection attack here or not?
                                    :edn-params        {:query `[:find ~(reader/read-string pull-expr)
-                                                                :where ~(reader/read-string  where-expr)]}}))) ;; [?e :name "IVan"]
-            to_datoms (fn [[entity]]
-                        (let [eid (:db/id entity)]
-                          (vec (map (fn [[attr val]]
-                                      [eid attr val])
-                                 entity))))]
+                                                                :where ~(reader/read-string  where-expr)]}})))]
         (println "response: " r)
         {:datoms/id       :the-datoms
          :datoms/elements (cond
                             (vector? r)  #{r}
-                            (set? r)     r)})))
+                            (set? r)     r)
+         :datoms/query-input {:query-input/id :the-query-input}})))
 
 
 

@@ -18,14 +18,15 @@
       {:the-datoms {:datoms/id       :the-datoms
                     :datoms/elements (mapv (fn [d] [(zipmap [:id :attribute :value :transac-id :added] d)])
                                          (:body r))
-                    }})))
+                    :datoms/query-input {:query-input/id :the-query-input}}})))
 
 
 (defresolver query-input-resolver [env input]
-  {::pc/output [{:the-query-input [:query-input/id :query-input/pull-expr :query-input/where-expr]}]}
-             {:the-query-input {:query-input/id :the-query-input
-                                :query-input/pull-expr "[(pull ?e [*])]"
-                                :query-input/where-expr "[?e _ _]"}})
+  {::pc/input #{:query-input/id}
+   ::pc/output [:query-input/id :query-input/pull-expr :query-input/where-expr]}
+  {:query-input/id input
+   :query-input/pull-expr "[(pull ?e [*])]"
+   :query-input/where-expr "[?e _ _]"})
 
 (def resolvers [datoms-resolver query-input-resolver])
 
