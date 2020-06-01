@@ -14,40 +14,39 @@
 
 ;; For /q
 ;;
-;;TODO: Rename entity-id
-;;TODO: rename 'selector
-(defsc QueryInput [this {:query-input/keys [id pull-expr selector] :as props}]
-  {:query [:query-input/id :query-input/pull-expr :query-input/selector]
+;;TODO: rename 'where-expr
+(defsc QueryInput [this {:query-input/keys [id pull-expr where-expr] :as props}]
+  {:query [:query-input/id :query-input/pull-expr :query-input/where-expr]
    :initial-state (fn [_] {:query-input/id      ":query-input-init-state"
-                           :query-input/selector "[?e :name 'IVan']"
+                           :query-input/where-expr "[?e :name 'IVan']"
                            :query-input/pull-expr  "[(pull ?e [*])]"})
    :ident         (fn [] [:query-input/id :the-query-input])}
   (div
     (div
       (label "Pull expr:"
-        ;; TODO: try to use this same string set in the resolver
+        ;; TODO: try to use this same string preset in the resolver
         (textarea {:value    "[(pull ?e [*])]"
                    #_:onChange #_(fn [event]
                                    (println "---->" (type event))
                                    (m/set-string! this :query-input/pull-expr :event event))})))
     (div
       (label "Where:"
-        (let [set-string! #(m/set-string! this :query-input/selector :event %)]
-          (textarea {:value selector
+        (let [set-string! #(m/set-string! this :query-input/where-expr :event %)]
+          (textarea {:value where-expr
                      :onPaste set-string!
                      :onChange set-string!}))))
 
     (div
-      (println "pull-expr "  pull-expr  "type: " (type pull-expr))
-      (println "Selector: " selector)
+      (println "Pull: "  pull-expr  "type: " (type pull-expr))
+      (println "Where: " where-expr)
       (button {:onClick
                (fn []
 
                  (println "after submit: pull-expr " (type pull-expr))
-                 (println "after submit: Selector: " selector)
+                 (println "after submit: Where-Expr: " where-expr)
                  (comp/transact! this [(dm/submit-query-input
                                          {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
-                                          :query-input/selector selector ;; "[?e :name \"IVan\"]"
+                                          :query-input/where-expr where-expr ;; "[?e :name \"IVan\"]"
                                           ;; TODO: use the var pull-expr here once we use this same string set in the resolver
                                           :query-input/pull-expr  "[(pull ?e [*])]"})
                                        (comp/get-query Datoms)]))}

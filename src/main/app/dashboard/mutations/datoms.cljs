@@ -14,7 +14,7 @@
 
 (defmutation submit-query-input
   "Submits the query entered manually by user"
-  [{:query-input/keys [pull-expr selector target-comp]}]
+  [{:query-input/keys [pull-expr where-expr target-comp]}]
   (action [{:keys [state]}]
     (p/pprint "hello" #_@state))
   (ok-action [env]
@@ -22,27 +22,27 @@
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
-    (println "in rest-remote" (type selector) )
+    (println "in rest-remote" (type where-expr) )
     (-> env
       (m/with-server-side-mutation `a-pull-query)
       (m/with-params {:query-input/pull-expr pull-expr
-                      :query-input/selector selector})
+                      :query-input/where-expr where-expr})
       (m/returning target-comp))))
 
 
 ;;TODO: rename to 'query
-(pc/defmutation a-pull-query [env {:query-input/keys [pull-expr selector]}]
+(pc/defmutation a-pull-query [env {:query-input/keys [pull-expr where-expr]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
-   ::pc/params [:query-input/pull-expr :query-input/selector]
+   ::pc/params [:query-input/pull-expr :query-input/where-expr]
    ::pc/output [:datoms/id :datoms/elements]}
-  (log/info (str "In pathom-mutations: -------------- " pull-expr " --- " selector ))
+  (log/info (str "In pathom-mutations: -------------- " pull-expr " --- " where-expr ))
   (go (let [r        (:body (<! (http/post "http://localhost:3000/q"
                                   {:with-credentials? false
                                    :headers           {"Content-Type" "application/edn"
                                                        "Accept"       "application/edn"}
                                    ;; TODO TODO TODO: !!!!!! Possible Injection attack here or not?
                                    :edn-params        {:query `[:find ~(reader/read-string pull-expr)
-                                                                :where ~(reader/read-string  selector)]}}))) ;; [?e :name "IVan"]
+                                                                :where ~(reader/read-string  where-expr)]}}))) ;; [?e :name "IVan"]
             to_datoms (fn [[entity]]
                         (let [eid (:db/id entity)]
                           (vec (map (fn [[attr val]]
@@ -125,7 +125,7 @@
                                          "Accept"       "application/edn"}
                      :edn-params        {:eid 1
                                          ;;[[:db/add -1 :player/name "IIIIvanooooo"]]
-                                         :selector [:name]}
+                                         :where-expr [:name]}
                               }))]
         (println "resp: " (:body d))
         ;;(df/load! SPA :the-datoms dui/Datoms {:remote :rest-remote})
