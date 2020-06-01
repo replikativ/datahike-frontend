@@ -12,9 +12,6 @@
 
 ;; TODO: Make datahike-server accept connection from localhost:4000
 
-;; For /q
-;;
-;;TODO: rename 'where-expr
 (defsc QueryInput [this {:query-input/keys [id pull-expr where-expr] :as props}]
   {:query [:query-input/id :query-input/pull-expr :query-input/where-expr]
    :initial-state (fn [_] {:query-input/id      ":query-input-init-state"
@@ -41,7 +38,6 @@
       (println "Where: " where-expr)
       (button {:onClick
                (fn []
-
                  (println "after submit: pull-expr " (type pull-expr))
                  (println "after submit: Where-Expr: " where-expr)
                  (comp/transact! this [(dm/submit-query-input
