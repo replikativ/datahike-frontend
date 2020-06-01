@@ -75,8 +75,9 @@
       (ui-query-input)
       (mtable
         {:title    "Datoms"
+         ;; TODO: BUGS: keywords lose their namespace component
          :columns  (mapv (fn [c] {:title c :field c}) columns)
-
+         ;; TODO: BUGS: keywords lose their namespace component
          :data     (if (empty? (first elements))
                      []
                      (mapv first elements))
