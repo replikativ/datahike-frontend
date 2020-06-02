@@ -16,7 +16,7 @@ It connects to a Datahike-server instance.
 ## Start Datahike-frontend client 
  
     In the shell: npx shadow-cljs server
-    In Intellij REPL: (shadow/repl :main)
+    In IntelliJ's REPL: (shadow/repl :main)
     If you really want to use emacs then: cider-jack-in-cljs
     Choose options related to 'shadow'
     You might need to compile the js code here: http://localhost:9630
@@ -34,7 +34,7 @@ It should also allow connection from localhost:4000 (i.e. a different origin). R
 
 
 # Current status
-- Transacting works only when you are on the :eavt Datoms view. (I.e. when on the view showing each entity on a specific row, transactions do not work yet.)
+- Transacting works only when you are on the :eavt Datoms view. (I.e. on the view appearing after a query and showing each entity on a specific row, transactions do not work yet.)
 
 - Only query_pull type queries work.
 - Queries seem to have issues when the 'where' expression has multiple clauses.
