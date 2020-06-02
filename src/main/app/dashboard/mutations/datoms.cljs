@@ -98,8 +98,7 @@
                      :edn-params        {:tx-data tx-data
                                          :tx-meta []}}))]
         ;; (println "resp: " (:body d))
-        {:datoms/id :the-datoms}
-        )))
+        {:datoms/id :the-datoms})))
 
 
 
