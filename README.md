@@ -5,10 +5,9 @@ It connects to a Datahike-server instance.
 
 ## SERVER, i.e. Clj side
  in a shell: clj -A:dev:cider-clj -J-Dtrace -J-Dghostwheel.enabled=true
- then in emacs in the project:
- cider-connect-clj | localhost | <the port it suggests>
+ then in emacs in the project: cider-connect-clj | localhost | <the port it suggests>
  in the repl: user> (start)
- in the browser: localhost4000
+ in the browser: localhost:4000
  If restart needed after compilation pblm:
  (tools-ns/refresh)
  (start)
@@ -18,8 +17,7 @@ It connects to a Datahike-server instance.
  In the shell: npx shadow-cljs server
  In Intellij REPL: (shadow/repl :main)
  Still, if you really want to use emacs then: cider-jack-in-cljs
- (This will execute: - npx shadow-cljs server (followed it by '(shadow/repl :main)' if running in a shell) (Use this rather on IntelliJ)
- Always choose options related to 'shadow'
+ Choose options related to 'shadow'
  You might need to compile the js code here: http://localhost:9630
  The http server is here: http://localhost:8000/
  The nrepl is server in port 9000
