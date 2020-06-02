@@ -16,15 +16,15 @@
    ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
   (go
     ;; TODO: abstract the call, e.g. use config to set the server name, extract the params, etc...
-    (let [r (<! (http/post "http://localhost:3000/datoms"
-                  {:with-credentials? false
-                   :headers {"Content-Type" "application/transit+json"
-                             "Accept"       "application/transit+json"}
-                   :transit-params {:index :eavt}}))]
-      (println "================ In datoms-resolver: " r)
+    (let [datoms (:body (<! (http/post "http://localhost:3000/datoms"
+                              {:with-credentials? false
+                               :headers {"Content-Type" "application/transit+json"
+                                         "Accept"       "application/transit+json"}
+                               :transit-params {:index :eavt}})))]
+      (println "================ In datoms-resolver: " datoms)
       {:datoms/id       id
        :datoms/elements (mapv (fn [d] [(zipmap [:id :attribute :value :transac-id :added] d)])
-                          (:body r))
+                          datoms)
        :datoms/query-input {:query-input/id :the-query-input}})))
 
 
