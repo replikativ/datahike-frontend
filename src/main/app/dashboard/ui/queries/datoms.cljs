@@ -10,8 +10,9 @@
 
 (declare Datoms)
 
-;; TODO: Make datahike-server accept connection from localhost:4000
-
+;; TODO: Add tests
+;; TODO: format code
+;; TODO; use Clj-kondo
 
 (defsc QueryInput [this {:query-input/keys [id pull-expr where-expr] :as props}]
   {:query [:query-input/id :query-input/pull-expr :query-input/where-expr]
