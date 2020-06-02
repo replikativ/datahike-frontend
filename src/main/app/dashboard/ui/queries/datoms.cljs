@@ -91,9 +91,10 @@
   (println "%%%%%%%%% elements: " elements)
   (let [columns (reduce into (map #(into #{} (keys (first %))) elements))]
     ;;(println "***** Columns: " columns)
-    (div
-      (ui-query-input query-input)
-      (div
+    (div :.ui.two.column.grid
+      (div :.row
+        (ui-query-input query-input))
+      (div :.row
         (mtable
           {:title    "Datoms"
            ;; TODO: BUGS: keywords lose their namespace component

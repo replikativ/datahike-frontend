@@ -162,12 +162,14 @@
                               :onClick (fn []
                                          (println "About to rout to datoms")
                                          (df/load! this :the-datoms dui/Datoms {:remote :rest-remote})
-                                         (dr/change-route this ["main" "datoms"]))} "Datoms"))
+                                         (dr/change-route this ["main" "datoms"]))}
+                 "All Datoms"))
           (div (dom/a :.item {:classes [(when (= :schema current-panel) "active")]
                               :onClick (fn []
                                          (println "About to rout to SCHEMA")
                                          (df/load! this :the-schema sui/Schema {:remote :rest-remote})
-                                         (dr/change-route! this ["main" "schema"]))} "Schema"))))
+                                         (dr/change-route! this ["main" "schema"]))}
+                 "Schema"))))
       (div :.thirteen.wide.column
         (div :.ui.container.segment
           (ui-main-router router))))))
