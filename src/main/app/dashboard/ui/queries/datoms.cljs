@@ -12,43 +12,47 @@
 
 ;; TODO: Make datahike-server accept connection from localhost:4000
 
+
 (defsc QueryInput [this {:query-input/keys [id pull-expr where-expr] :as props}]
   {:query [:query-input/id :query-input/pull-expr :query-input/where-expr]
    :initial-state (fn [_] {:query-input/id  :query-input-init-state
                            :query-input/where-expr "[?e :name 'IVan']"
                            :query-input/pull-expr  "[(pull ?e [*])]"})
    :ident         (fn [] [:query-input/id :the-query-input])}
-  (div
-    (div
-      (label "Pull expr:"
+  (div :.ui.form
+    (div :.field
+      (label "Pull expression:"
         ;; TODO: try to use this same string preset in the resolver
         (let [set-string! (fn [event]
                             (println "---->" (type event))
                             (m/set-string! this :query-input/pull-expr :event event))]
           (textarea {:value    (or pull-expr "[(pull ?e [*])]")
                      :onChange set-string!
-                     :onPaste  set-string!}))))
-    (div
+                     :onPaste  set-string!
+                     :rows 1}))))
+    (div :.field
       (label "Where:"
         (let [set-string! #(m/set-string! this :query-input/where-expr :event %)]
           (textarea {:value (or where-expr "[?e _ _]")
                      :onPaste set-string!
-                     :onChange set-string!}))))
+                     :onChange set-string!
+                     :rows 2}))))
 
-    (div
-      (println "Pull: "  pull-expr  "type: " (type pull-expr))
-      (println "Where: " where-expr)
-      (button {:onClick
-               (fn []
-                 (println "after submit: pull-expr " (type pull-expr))
-                 (println "after submit: Where-Expr: " where-expr)
-                 (comp/transact! this [(dm/submit-query-input
-                                         {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
-                                          :query-input/where-expr where-expr ;; "[?e :name \"IVan\"]"
-                                          ;; TODO: use the var pull-expr here once we use this same string set in the resolver
-                                          :query-input/pull-expr pull-expr})
-                                       (comp/get-query Datoms)]))}
-        "Query!"))))
+    #_(div
+        (println "Pull: "  pull-expr  "type: " (type pull-expr))
+        (println "Where: " where-expr))
+    (button :.ui.button
+      {:onClick
+       (fn []
+         (println "after submit: pull-expr " (type pull-expr))
+         (println "after submit: Where-Expr: " where-expr)
+         (comp/transact! this [(dm/submit-query-input
+                                 {:query-input/target-comp :app.dashboard.ui.queries.datoms/Datoms
+                                  :query-input/where-expr where-expr ;; "[?e :name \"IVan\"]"
+                                  ;; TODO: use the var pull-expr here once we use this same string set in the resolver
+                                  :query-input/pull-expr pull-expr})
+                               (comp/get-query Datoms)]))}
+      "Query!")))
 
 (def ui-query-input (comp/factory QueryInput))
 
@@ -89,30 +93,31 @@
     ;;(println "***** Columns: " columns)
     (div
       (ui-query-input query-input)
-      (mtable
-        {:title    "Datoms"
-         ;; TODO: BUGS: keywords lose their namespace component
-         :columns  (mapv (fn [c] {:title c :field c}) columns)
-         ;; TODO: BUGS: keywords lose their namespace component
-         :data     (if (empty? (first elements))
-                     []
-                     (mapv non-number-vals-to-str (mapv first elements)))
+      (div
+        (mtable
+          {:title    "Datoms"
+           ;; TODO: BUGS: keywords lose their namespace component
+           :columns  (mapv (fn [c] {:title c :field c}) columns)
+           ;; TODO: BUGS: keywords lose their namespace component
+           :data     (if (empty? (first elements))
+                       []
+                       (mapv non-number-vals-to-str (mapv first elements)))
 
-         :editable {:onRowAdd    (fn [newData]
-                                   (do
-                                     (comp/transact! this
-                                       [(dm/update-datoms {:datoms/datom (into [:db/add]
-                                                                           (vec (vals (js->clj newData))))
-                                                           :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
-                                     (js/Promise.resolve newData)))
+           :editable {:onRowAdd    (fn [newData]
+                                     (do
+                                       (comp/transact! this
+                                         [(dm/update-datoms {:datoms/datom (into [:db/add]
+                                                                             (vec (vals (js->clj newData))))
+                                                             :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
+                                       (js/Promise.resolve newData)))
 
-                    :onRowUpdate (fn [newData, oldData]
-                                   (do
-                                     (comp/transact! this
-                                       [(dm/update-datoms {:datoms/datom       (vals (js->clj newData))
-                                                           :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
-                                     (js/Promise.resolve newData)))
-                    :onRowDelete id}}))))
+                      :onRowUpdate (fn [newData, oldData]
+                                     (do
+                                       (comp/transact! this
+                                         [(dm/update-datoms {:datoms/datom       (vals (js->clj newData))
+                                                             :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
+                                       (js/Promise.resolve newData)))
+                      :onRowDelete id}})))))
 
 (def ui-datoms (comp/factory Datoms))
 
