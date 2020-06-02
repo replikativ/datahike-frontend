@@ -35,7 +35,7 @@
 (pc/defmutation a-pull-query [env {:query-input/keys [pull-expr where-expr]}]
   {;;::pc/sym    `pull-query ;; If using 'sym then !!! the quote is a BACK quote
    ::pc/params [:query-input/pull-expr :query-input/where-expr]
-   ::pc/output [:datoms/id :datoms/elements]}
+   ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
   (log/info (str "In pathom-mutations: -------------- " pull-expr " --- " where-expr ))
   (go (let [r        (:body (<! (http/post "http://localhost:3000/q"
                                   {:with-credentials? false
