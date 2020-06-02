@@ -24,9 +24,13 @@ It connects to a Datahike-server instance.
     The nrepl is server in port 900
  
 ## Datahike-server
-You need to start a Datahike server as well. It is expected to listen on port 3000 and to allow connection from localhost:4000 (i.e. a different origin).
+You need to start a Datahike server as well. 
+It is expected to listen on port 3000.
+It should also allow connection from localhost:4000 (i.e. a different origin). Replace the `wrap-cors` declaration in `server.clj` by the following:
 
-
+      (wrap-cors :access-control-allow-origin [#"http://localhost" #"http://localhost:8080" #"http://localhost:4000"]
+                 :access-control-allow-methods [:get :put :post :delete])  (wrap-cors :access-control-allow-origin [#"http://localhost" #"http://localhost:8080" #"http://localhost:4000"]
+                 :access-control-allow-methods [:get :put :post :delete])
 
 
 # Current status
