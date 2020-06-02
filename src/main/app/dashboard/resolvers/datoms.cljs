@@ -6,19 +6,26 @@
     [cljs-http.client :as http]
     [cljs.core.async :refer [<!]]))
 
-(defresolver datoms-resolver [env input]
-  {::pc/output [{:the-datoms [:datoms/id :datoms/elements]}]}
+(defresolver all-datoms-resolver [env input]
+  {::pc/output [{:the-datoms [:datoms/id :datoms/elements :datoms/query-input]}]}
+  {:the-datoms {:datoms/id :the-datoms}})
+
+
+(defresolver datoms-resolver [env id]
+  {::pc/input #{:datoms/id}
+   ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
   (go
+    ;; TODO: abstract the call, e.g. use config to set the server name, extract the params, etc...
     (let [r (<! (http/post "http://localhost:3000/datoms"
                   {:with-credentials? false
                    :headers {"Content-Type" "application/transit+json"
                              "Accept"       "application/transit+json"}
                    :transit-params {:index :eavt}}))]
-      ;;(println r)
-      {:the-datoms {:datoms/id       :the-datoms
-                    :datoms/elements (mapv (fn [d] [(zipmap [:id :attribute :value :transac-id :added] d)])
-                                         (:body r))
-                    :datoms/query-input {:query-input/id :the-query-input}}})))
+      (println "================ In datoms-resolver: " r)
+      {:datoms/id       id
+       :datoms/elements (mapv (fn [d] [(zipmap [:id :attribute :value :transac-id :added] d)])
+                          (:body r))
+       :datoms/query-input {:query-input/id :the-query-input}})))
 
 
 (defresolver query-input-resolver [env input]
@@ -28,7 +35,7 @@
    :query-input/pull-expr "[(pull ?e [*])]"
    :query-input/where-expr "[?e _ _]"})
 
-(def resolvers [datoms-resolver query-input-resolver])
+(def resolvers [all-datoms-resolver datoms-resolver query-input-resolver])
 
 
 
