@@ -114,6 +114,7 @@
 
                       :onRowUpdate (fn [newData, oldData]
                                      (do
+                                       (println "*******" oldData "******" newData)
                                        (comp/transact! this
                                          [(dm/update-datoms {:datoms/datom       (vals (js->clj newData))
                                                              :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
