@@ -17,11 +17,10 @@ It connects to a Datahike-server instance.
  
     In the shell: npx shadow-cljs server
     In IntelliJ's REPL: (shadow/repl :main)
-    If you really want to use emacs then: cider-jack-in-cljs
+    If you want to use emacs then: cider-jack-in-cljs
     Choose options related to 'shadow'
     You might need to compile the js code here: http://localhost:9630
-    The http server is here: http://localhost:8000/
-    The nrepl is server in port 900
+    The nrepl is server in port 9000
  
 ## Datahike-server
 You need to start a Datahike server as well. 
