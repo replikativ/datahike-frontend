@@ -102,12 +102,15 @@
                                    (do
                                      (comp/transact! this
                                        [(dm/update-datoms {:datoms/datom (into [:db/add]
-                                                                           (vec (vals (js->clj newData))))})])
+                                                                           (vec (vals (js->clj newData))))
+                                                           :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
                                      (js/Promise.resolve newData)))
 
                     :onRowUpdate (fn [newData, oldData]
                                    (do
-                                     (comp/transact! this [(dm/update-datoms {:datoms/datom (vals (js->clj newData))})])
+                                     (comp/transact! this
+                                       [(dm/update-datoms {:datoms/datom       (vals (js->clj newData))
+                                                           :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
                                      (js/Promise.resolve newData)))
                     :onRowDelete id}}))))
 

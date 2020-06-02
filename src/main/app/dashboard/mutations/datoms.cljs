@@ -59,7 +59,7 @@
 
 (defmutation update-datoms
   "Client Mutation: updates a datom"
-  [{:datoms/keys [datom]}]
+  [{:datoms/keys [datom target-comp]}]
   (action [{:keys [state]}]
     ;;(p/pprint #_@state)
     (log/info "In update-datoms's action"))
@@ -68,28 +68,36 @@
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
+    (-> env
+      (m/with-server-side-mutation `transact-datoms)
+      (m/with-params {:datoms/my-datom datom})
+      (m/returning target-comp))
     ;;(println "in Fulcro mutation: datom: " (type datom))
-    (eql/query->ast1 `[(transact-datoms {:datoms/my-datom ~datom})])))
+    ;;(eql/query->ast1 `[(transact-datoms {:datoms/my-datom ~datom})])
+    ))
 
 
 
 (pc/defmutation transact-datoms [env {:keys [datoms/my-datom]}]
   {::pc/params [:datoms/my-datom]
-   ::pc/output [:datoms/id]}
+   ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
   (log/info (str "In client-mutations - transact-datoms: --- " my-datom (coll? my-datom) "---" ))
-  (go (let [d (<! (http/post "http://localhost:3000/transact"
-                             {:with-credentials? false
-                              :headers           {"Content-Type" "application/edn"
-                                                  "Accept"       "application/edn"}
-                              ;; TODO: Below works only when the table is in :eavt form
-                              ;; i.e., will not work when the table shows an entity in one row
-                              :edn-params        {:tx-data [[:db/add (first my-datom)
-                                                             (keyword (nth my-datom 1))
-                                                             (nth my-datom 2)]]
-                                                  :tx-meta []}}))]
+  (go (let [tx-data [[:db/add (first my-datom)
+                      ;; TODO: The below line converts the string ":event/name" into a keyword.
+                      ;; Isn't the read-string subject to injection attack?
+                      ;; Using (keyword ":event/name") does not work as it gives ::event/name.
+                      (reader/read-string (nth my-datom 1))
+                      (nth my-datom 2)]]
+            ;;_ (println "+++++++ tx-data:" tx-data)
+            d (<! (http/post "http://localhost:3000/transact"
+                    {:with-credentials? false
+                     :headers           {"Content-Type" "application/edn"
+                                         "Accept"       "application/edn"}
+                     ;; TODO: Below works only when the table is in :eavt form
+                     ;; i.e., will not work when the table shows an entity in one row
+                     :edn-params        {:tx-data tx-data
+                                         :tx-meta []}}))]
         ;; (println "resp: " (:body d))
-        ;; (println "my good datom: " my-datom)
-        ;; TODO: Find a way to reload the table from here
         {:datoms/id :the-datoms}
         )))
 
