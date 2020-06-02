@@ -23,12 +23,15 @@
 - then in emacs in the project:
   - cider-connect | localhost | <the port it suggests>
   - in the repl: user> (start)
-  - in the browser: localhost3000/index.html   (the index.html is important)
+  - in the browser: localhost4000/index.html   (the index.html is important)
   - If restart needed after compilation pblm:
     - (tools-ns/refresh)
     - (start)
 ** CLIENT, cljs
-- cider-jack-in-cljs
+- Better not to use emacs if server part is already using emacs. Better use shell + Intellij:
+  - In the shell: npx shadow-cljs server
+  - In Intellij REPL: (shadow/repl :main)
+- Still, if you really want to use emacs then: cider-jack-in-cljs
   - (This will execute: - npx shadow-cljs server (followed it by '(shadow/repl :main)' if running in a shell) (Use this rather on IntelliJ)
   - Always choose options related to 'shadow'
 - You might need to compile the js code here: http://localhost:9630
