@@ -2,6 +2,7 @@ A front-end to Datahike written in Fulcro.
 It connects to a Datahike-server instance.
 
 # Quick start
+
 ## SERVER, i.e. Clj side
  in a shell: clj -A:dev:cider-clj -J-Dtrace -J-Dghostwheel.enabled=true
  then in emacs in the project:
@@ -11,6 +12,7 @@ It connects to a Datahike-server instance.
  If restart needed after compilation pblm:
  (tools-ns/refresh)
  (start)
+
 ## CLIENT, cljs
  Better not to use emacs if server part is already using emacs. Better use shell + Intellij:
  In the shell: npx shadow-cljs server
