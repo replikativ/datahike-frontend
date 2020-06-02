@@ -2,7 +2,7 @@ A front-end to Datahike written in Fulcro.
 It connects to a Datahike-server instance.
 
 
-<img src="./public/dh-frontend.gif" width="140" height="140" />
+<img src="./public/dh-frontend.gif" width="500" height="500" />
 
 # Quick start
 
