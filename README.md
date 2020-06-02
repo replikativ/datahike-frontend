@@ -4,6 +4,8 @@ It connects to a Datahike-server instance.
 
 [Preview](./public/dh-frontend.gif)
 
+./public/dh-frontend.gif
+
 # Quick start
 
 ## Start Datahike-frontend server
