@@ -92,35 +92,35 @@
   (println "%%%%%%%%% elements: " elements)
   (let [columns (reduce into (map #(into #{} (keys (first %))) elements))]
     ;;(println "***** Columns: " columns)
-    (div :.ui.two.column.grid
-      (div :.row
-        (ui-query-input query-input))
-      (div :.row
-        (mtable
-          {:title    "Datoms"
-           ;; TODO: BUGS: keywords lose their namespace component
-           :columns  (mapv (fn [c] {:title c :field c}) columns)
-           ;; TODO: BUGS: keywords lose their namespace component
-           :data     (if (empty? (first elements))
-                       []
-                       (mapv non-number-vals-to-str (mapv first elements)))
+    [(div :.ui.two.column.grid
+        (div :.row
+          (ui-query-input query-input)))
+     (div :.row
+       (mtable
+         {:title    "Datoms"
+          ;; TODO: BUGS: keywords lose their namespace component
+          :columns  (mapv (fn [c] {:title c :field c}) columns)
+          ;; TODO: BUGS: keywords lose their namespace component
+          :data     (if (empty? (first elements))
+                      []
+                      (mapv non-number-vals-to-str (mapv first elements)))
 
-           :editable {:onRowAdd    (fn [newData]
-                                     (do
-                                       (comp/transact! this
-                                         [(dm/update-datoms {:datoms/datom (into [:db/add]
-                                                                             (vec (vals (js->clj newData))))
-                                                             :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
-                                       (js/Promise.resolve newData)))
+          :editable {:onRowAdd    (fn [newData]
+                                    (do
+                                      (comp/transact! this
+                                        [(dm/update-datoms {:datoms/datom (into [:db/add]
+                                                                            (vec (vals (js->clj newData))))
+                                                            :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
+                                      (js/Promise.resolve newData)))
 
-                      :onRowUpdate (fn [newData, oldData]
-                                     (do
-                                       (println "*******" oldData "******" newData)
-                                       (comp/transact! this
-                                         [(dm/update-datoms {:datoms/datom       (vals (js->clj newData))
-                                                             :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
-                                       (js/Promise.resolve newData)))
-                      :onRowDelete id}})))))
+                     :onRowUpdate (fn [newData, oldData]
+                                    (do
+                                      (println "*******" oldData "******" newData)
+                                      (comp/transact! this
+                                        [(dm/update-datoms {:datoms/datom       (vals (js->clj newData))
+                                                            :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
+                                      (js/Promise.resolve newData)))
+                     :onRowDelete id}}))]))
 
 (def ui-datoms (comp/factory Datoms))
 
