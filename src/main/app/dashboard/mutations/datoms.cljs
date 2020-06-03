@@ -52,7 +52,8 @@
                             (set? r)     r)
          :datoms/query-input {:query-input/id :the-query-input
                               :query-input/pull-expr pull-expr
-                              :query-input/where-expr where-expr}})))
+                              :query-input/where-expr where-expr}
+         :datoms/view-type :entities})))
 
 
 
@@ -60,7 +61,7 @@
 
 (defmutation update-datoms
   "Client Mutation: updates a datom"
-  [{:datoms/keys [datom target-comp]}]
+  [{:datoms/keys [datom target-comp view-type]}]
   (action [{:keys [state]}]
     ;;(p/pprint #_@state)
     (log/info "In update-datoms's action"))
@@ -73,25 +74,27 @@
     ;;(println "in Fulcro mutation: datom: " datom #_(type datom))
     (-> env
       (m/with-server-side-mutation `transact-datoms)
-      (m/with-params {:datoms/my-datom datom})
+      (m/with-params {:datoms/my-datom datom :datoms/view-type view-type})
       (m/returning target-comp))
     ;;(eql/query->ast1 `[(transact-datoms {:datoms/my-datom ~datom})])
     ))
 
 
 ;; TODO: rename my-datom to entity?
-(pc/defmutation transact-datoms [env {:keys [datoms/my-datom]}]
+(pc/defmutation transact-datoms [env {:keys [datoms/my-datom datoms/view-type]}]
   {::pc/params [:datoms/my-datom]
    ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
-  (go (let [tx-data [(h/str-to-clj my-datom)
-                     #_[:db/add (first my-datom)
-                      ;; TODO: The below line converts the string ":event/name" into a keyword.
-                      ;; Isn't the read-string subject to injection attack?
-                      ;; Using (keyword ":event/name") does not work as it gives ::event/name.
-                      (reader/read-string (nth my-datom 1))
-                        (nth my-datom 2)]]
-            ;;_ (println "+++++++ tx-data:" tx-data)
-            ;;_ (println "In client-mutations - transact-datoms: --- " (h/str-to-clj my-datom))
+  ;;(log/info (str "-----" my-datom))
+  (go (let [tx-data [(cond
+                       (= :entities view-type) (h/str-to-clj my-datom)
+                       (= :eavt view-type) [:db/add (first my-datom)
+                                            ;; TODO: The below line converts the string ":event/name" into a keyword.
+                                            ;; Isn't the read-string subject to injection attack?
+                                            ;; Using (keyword ":event/name") does not work as it gives ::event/name.
+                                            (reader/read-string (nth my-datom 1))
+                                            (nth my-datom 2)]
+                       :else (log/error (str "Unknown view-type:" view-type)))]
+            _ (log/info (str "+++++++ tx-data:" tx-data))
             d (<! (http/post "http://localhost:3000/transact"
                     {:with-credentials? false
                      :headers           {"Content-Type" "application/edn"

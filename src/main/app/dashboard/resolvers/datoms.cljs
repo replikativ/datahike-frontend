@@ -7,13 +7,14 @@
     [cljs.core.async :refer [<!]]))
 
 (defresolver all-datoms-resolver [env input]
-  {::pc/output [{:the-datoms [:datoms/id :datoms/elements :datoms/query-input]}]}
-  {:the-datoms {:datoms/id :the-datoms}})
+  {::pc/output [{:the-datoms [:datoms/id :datoms/elements :datoms/query-input :datoms/view-type]}]}
+  {:the-datoms {:datoms/id :the-datoms
+                :datoms/view-type :eavt }})
 
 
 (defresolver datoms-resolver [env id]
   {::pc/input #{:datoms/id}
-   ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
+   ::pc/output [:datoms/id :datoms/elements :datoms/query-input :datoms/view-type]}
   (go
     ;; TODO: abstract the call, e.g. use config to set the server name, extract the params, etc...
     (let [datoms (:body (<! (http/post "http://localhost:3000/datoms"
@@ -25,7 +26,8 @@
       {:datoms/id       id
        :datoms/elements (mapv (fn [d] [(zipmap [:id :attribute :value :transac-id :added] d)])
                           datoms)
-       :datoms/query-input {:query-input/id :the-query-input}})))
+       :datoms/query-input {:query-input/id :the-query-input}
+       :datoms/view-type :eavt})))
 
 
 (defresolver query-input-resolver [env input]

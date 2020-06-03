@@ -64,14 +64,19 @@
 
 (def mtable (interop/react-factory MaterialTable))
 
+
+(def title {:eavt "Datoms" :entities "Entities"})
+
+
 ;; TODO: look of QueryInput
 
-(defsc Datoms [this {:datoms/keys [id elements query-input] :as props}]
-  {:query [:datoms/id :datoms/elements
+(defsc Datoms [this {:datoms/keys [id elements query-input view-type] :as props}]
+  {:query [:datoms/id :datoms/elements :datoms/view-type
            {:datoms/query-input (comp/get-query QueryInput)}]
    :initial-state (fn [_] {:datoms/id      ":datoms-init-state"
                            :datoms/elements {}
-                           :datoms/query-input (comp/get-initial-state QueryInput)})
+                           :datoms/query-input (comp/get-initial-state QueryInput)
+                           :datoms/view-type :eavt})
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
   ;; TODO: Change so that each collection element below is not inside an array. Use spec to enforce this.
@@ -83,8 +88,14 @@
         columns (reduce into (map #(into #{} (keys %)) stringified-elems))
         update-datoms (fn [newData]
                         (comp/transact! this
-                          [(dm/update-datoms {:datoms/datom (js->clj newData)
-                                              :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
+                          [(dm/update-datoms {:datoms/datom (cond
+                                                              (= view-type :entities)
+                                                              (js->clj newData)
+
+                                                              (= view-type :eavt)
+                                                              (vec (vals (js->clj newData))))
+                                              :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms
+                                              :datoms/view-type view-type})])
                         (js/Promise.resolve newData))]
     (log/info (str "%%%%%%%%% elements-: " stringified-elems))
     (log/info (str "***** Columns: " columns))
@@ -93,12 +104,11 @@
          (ui-query-input query-input)))
      (div :.row
        (mtable
-         {:title    "Datoms"
+         {:title    (view-type title)
           :columns  (mapv (fn [c] {:title c :field c}) columns)
           :data     (if (empty? (first stringified-elems))
                       []
                       stringified-elems)
-
           :editable {:onRowAdd    (fn [newData]
                                     (update-datoms newData))
                      :onRowUpdate (fn [newData, oldData]
