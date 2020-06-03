@@ -21,7 +21,7 @@
                                :headers {"Content-Type" "application/transit+json"
                                          "Accept"       "application/transit+json"}
                                :transit-params {:index :eavt}})))]
-      (println "================ In datoms-resolver: " datoms)
+      ;;(println "================ In datoms-resolver: " datoms)
       {:datoms/id       id
        :datoms/elements (mapv (fn [d] [(zipmap [:id :attribute :value :transac-id :added] d)])
                           datoms)

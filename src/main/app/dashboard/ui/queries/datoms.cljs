@@ -1,5 +1,6 @@
 (ns app.dashboard.ui.queries.datoms
   (:require
+   [taoensso.timbre :as log]
    [app.dashboard.mutations.datoms :as dm]
    [app.dashboard.helper :as h]
    [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
@@ -65,11 +66,6 @@
 
 ;; TODO: look of QueryInput
 
-;;TODO BUG: when receiveing #{[{:db/id 536870926, :db/txInstant #inst "2020-05-20T15:08:38.020-00:00"}]}
-;; May be use below function to check whether val is #inst and convert it to string.
-
-
-
 (defsc Datoms [this {:datoms/keys [id elements query-input] :as props}]
   {:query [:datoms/id :datoms/elements
            {:datoms/query-input (comp/get-query QueryInput)}]
@@ -79,26 +75,24 @@
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
   ;; TODO: Change so that each collection element below is not inside an array. Use spec to enforce this.
+  ;;
   ;; Expects: [[{:id 1, :attribute :age, :value 31, :transac-id 536870961, :added true}]
   ;; [{:id 1, :attribute :name, :value Ivanov, :transac-id 536870961, :added true}]]
   ;;(println "%%%%%%%%% elements: " elements)
-  (let [converted-elems (mapv h/clj-to-str (mapv first elements))
-        _ (println "%%%%%%%%% converted elements: "  (type (first (keys (h/clj-to-str {:db/id :db/id}))));;converted-elems
-            )
-        columns (reduce into (map #(into #{} (keys %)) converted-elems))]
-    (println "***** Columns: " columns)
+  (let [stringified-elems (mapv h/clj-to-str (mapv first elements))
+        columns (reduce into (map #(into #{} (keys %)) stringified-elems))]
+    (log/info (str "%%%%%%%%% elements-: " stringified-elems))
+    (log/info (str "***** Columns: " columns))
     [(div :.ui.two.column.grid
        (div :.row
          (ui-query-input query-input)))
      (div :.row
        (mtable
          {:title    "Datoms"
-          ;; TODO: BUGS: keywords lose their namespace component
           :columns  (mapv (fn [c] {:title c :field c}) columns)
-          ;; TODO: BUGS: keywords lose their namespace component
-          :data     (if (empty? (first converted-elems))
+          :data     (if (empty? (first stringified-elems))
                       []
-                      converted-elems)
+                      stringified-elems)
 
           :editable {:onRowAdd    (fn [newData]
                                     (do

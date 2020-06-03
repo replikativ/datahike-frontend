@@ -67,6 +67,7 @@
   (ok-action [env]
     (log/info "OK action"))
   (error-action [env]
+    ;; TODO Show error when happening
     (log/info "Error action"))
   (rest-remote [env]
     ;;(println "in Fulcro mutation: datom: " datom #_(type datom))
@@ -82,15 +83,15 @@
 (pc/defmutation transact-datoms [env {:keys [datoms/my-datom]}]
   {::pc/params [:datoms/my-datom]
    ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
-  (println (str "In client-mutations - transact-datoms: --- " my-datom " -- " (h/str-to-clj my-datom ) "   " (coll? my-datom) "---" ))
   (go (let [tx-data [(h/str-to-clj my-datom)
                      #_[:db/add (first my-datom)
                       ;; TODO: The below line converts the string ":event/name" into a keyword.
                       ;; Isn't the read-string subject to injection attack?
                       ;; Using (keyword ":event/name") does not work as it gives ::event/name.
                       (reader/read-string (nth my-datom 1))
-                      (nth my-datom 2)]]
+                        (nth my-datom 2)]]
             ;;_ (println "+++++++ tx-data:" tx-data)
+            ;;_ (println "In client-mutations - transact-datoms: --- " (h/str-to-clj my-datom))
             d (<! (http/post "http://localhost:3000/transact"
                     {:with-credentials? false
                      :headers           {"Content-Type" "application/edn"
