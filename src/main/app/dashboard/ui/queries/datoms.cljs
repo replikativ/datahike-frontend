@@ -1,6 +1,7 @@
 (ns app.dashboard.ui.queries.datoms
   (:require
    [app.dashboard.mutations.datoms :as dm]
+   [app.dashboard.helper :as h]
    [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
    [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b table thead tr th td tbody label textarea]]
@@ -67,16 +68,6 @@
 ;;TODO BUG: when receiveing #{[{:db/id 536870926, :db/txInstant #inst "2020-05-20T15:08:38.020-00:00"}]}
 ;; May be use below function to check whether val is #inst and convert it to string.
 
-;; Adapts answers such as: #{[{:db/id 10, :player/event [{:db/id 7} {:db/id 8} {:db/id 11}], :player/name Paul, :player/team [{:db/id 11} {:db/id 12}]}]}
-(defn- non-number-vals-to-str
-  "In map m, replaces vals that are not numbers by the corresponding string. I.e. vectors would simply be their string representations."
-  [m]
-  (let [map-vals (fn [f m]
-                   (into {} (map (juxt key (comp f val))) m))
-        vec-to-str (fn [val]
-                     (if (number? val) val (str val)))]
-    (map-vals vec-to-str m)))
-
 
 
 (defsc Datoms [this {:datoms/keys [id elements query-input] :as props}]
@@ -87,37 +78,42 @@
                            :datoms/query-input (comp/get-initial-state QueryInput)})
    :ident         (fn [] [:datoms/id :the-datoms])
    :route-segment ["datoms"]}
+  ;; TODO: Change so that each collection element below is not inside an array. Use spec to enforce this.
   ;; Expects: [[{:id 1, :attribute :age, :value 31, :transac-id 536870961, :added true}]
   ;; [{:id 1, :attribute :name, :value Ivanov, :transac-id 536870961, :added true}]]
-  (println "%%%%%%%%% elements: " elements)
-  (let [columns (reduce into (map #(into #{} (keys (first %))) elements))]
-    ;;(println "***** Columns: " columns)
+  ;;(println "%%%%%%%%% elements: " elements)
+  (let [converted-elems (mapv h/clj-to-str (mapv first elements))
+        _ (println "%%%%%%%%% converted elements: "  (type (first (keys (h/clj-to-str {:db/id :db/id}))));;converted-elems
+            )
+        columns (reduce into (map #(into #{} (keys %)) converted-elems))]
+    (println "***** Columns: " columns)
     [(div :.ui.two.column.grid
-        (div :.row
-          (ui-query-input query-input)))
+       (div :.row
+         (ui-query-input query-input)))
      (div :.row
        (mtable
          {:title    "Datoms"
           ;; TODO: BUGS: keywords lose their namespace component
           :columns  (mapv (fn [c] {:title c :field c}) columns)
           ;; TODO: BUGS: keywords lose their namespace component
-          :data     (if (empty? (first elements))
+          :data     (if (empty? (first converted-elems))
                       []
-                      (mapv non-number-vals-to-str (mapv first elements)))
+                      converted-elems)
 
           :editable {:onRowAdd    (fn [newData]
                                     (do
                                       (comp/transact! this
-                                        [(dm/update-datoms {:datoms/datom (into [:db/add]
+                                        [(dm/update-datoms {:datoms/datom (js->clj newData :keywordize-keys true)
+                                                            #_(into [:db/add]
                                                                             (vec (vals (js->clj newData))))
                                                             :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
                                       (js/Promise.resolve newData)))
 
                      :onRowUpdate (fn [newData, oldData]
                                     (do
-                                      (println "*******" oldData "******" newData)
+                                      (println "*******" oldData "******" (js->clj newData))
                                       (comp/transact! this
-                                        [(dm/update-datoms {:datoms/datom       (vals (js->clj newData))
+                                        [(dm/update-datoms {:datoms/datom       (js->clj newData ) ;;(vals (js->clj newData))
                                                             :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
                                       (js/Promise.resolve newData)))
                      :onRowDelete id}}))]))
@@ -150,4 +146,7 @@
     (if (vector? val) (str val) val))
 
   (map-vals vec-to-id res)
+
+  (h/clj-to-str {:db/id :hlle})
+  (h/str-to-clj {":db/id" " :hlle" 1 2})
   )

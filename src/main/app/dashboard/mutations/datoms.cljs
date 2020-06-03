@@ -3,6 +3,7 @@
   (:require
    [taoensso.timbre :as log]
    [cljs.pprint :as p]
+   [app.dashboard.helper :as h]
    [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
    [com.wsscode.pathom.connect :as pc]
    [com.fulcrologic.fulcro.algorithms.merge :as merge]
@@ -68,21 +69,22 @@
   (error-action [env]
     (log/info "Error action"))
   (rest-remote [env]
+    ;;(println "in Fulcro mutation: datom: " datom #_(type datom))
     (-> env
       (m/with-server-side-mutation `transact-datoms)
       (m/with-params {:datoms/my-datom datom})
       (m/returning target-comp))
-    ;;(println "in Fulcro mutation: datom: " (type datom))
     ;;(eql/query->ast1 `[(transact-datoms {:datoms/my-datom ~datom})])
     ))
 
 
-
+;; TODO: rename my-datom to entity?
 (pc/defmutation transact-datoms [env {:keys [datoms/my-datom]}]
   {::pc/params [:datoms/my-datom]
    ::pc/output [:datoms/id :datoms/elements :datoms/query-input]}
-  (log/info (str "In client-mutations - transact-datoms: --- " my-datom (coll? my-datom) "---" ))
-  (go (let [tx-data [[:db/add (first my-datom)
+  (println (str "In client-mutations - transact-datoms: --- " my-datom " -- " (h/str-to-clj my-datom ) "   " (coll? my-datom) "---" ))
+  (go (let [tx-data [(h/str-to-clj my-datom)
+                     #_[:db/add (first my-datom)
                       ;; TODO: The below line converts the string ":event/name" into a keyword.
                       ;; Isn't the read-string subject to injection attack?
                       ;; Using (keyword ":event/name") does not work as it gives ::event/name.
