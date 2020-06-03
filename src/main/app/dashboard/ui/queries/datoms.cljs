@@ -80,7 +80,12 @@
   ;; [{:id 1, :attribute :name, :value Ivanov, :transac-id 536870961, :added true}]]
   ;;(println "%%%%%%%%% elements: " elements)
   (let [stringified-elems (mapv h/clj-to-str (mapv first elements))
-        columns (reduce into (map #(into #{} (keys %)) stringified-elems))]
+        columns (reduce into (map #(into #{} (keys %)) stringified-elems))
+        update-datoms (fn [newData]
+                        (comp/transact! this
+                          [(dm/update-datoms {:datoms/datom (js->clj newData)
+                                              :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
+                        (js/Promise.resolve newData))]
     (log/info (str "%%%%%%%%% elements-: " stringified-elems))
     (log/info (str "***** Columns: " columns))
     [(div :.ui.two.column.grid
@@ -95,21 +100,10 @@
                       stringified-elems)
 
           :editable {:onRowAdd    (fn [newData]
-                                    (do
-                                      (comp/transact! this
-                                        [(dm/update-datoms {:datoms/datom (js->clj newData :keywordize-keys true)
-                                                            #_(into [:db/add]
-                                                                            (vec (vals (js->clj newData))))
-                                                            :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
-                                      (js/Promise.resolve newData)))
-
+                                    (update-datoms newData))
                      :onRowUpdate (fn [newData, oldData]
-                                    (do
-                                      (println "*******" oldData "******" (js->clj newData))
-                                      (comp/transact! this
-                                        [(dm/update-datoms {:datoms/datom       (js->clj newData ) ;;(vals (js->clj newData))
-                                                            :datoms/target-comp :app.dashboard.ui.queries.datoms/Datoms})])
-                                      (js/Promise.resolve newData)))
+                                    (update-datoms newData))
+                     ;; TODO: on delete
                      :onRowDelete id}}))]))
 
 (def ui-datoms (comp/factory Datoms))
@@ -123,23 +117,8 @@
 
   (def columns (reduce into (map #(into #{} (keys (first %))) entities)))
 
-  columns
-  (mapv (fn [c] {:title c :field c}) columns)
-
-  (into #{1 2} (set (keys (first entity))))
-
   (def res {:db/id 10, :player/event [{:db/id 7} {:db/id 8} {:db/id 11}], :player/name "Paul", :player/team [{:db/id 11} {:db/id 12}]})
 
-  (defn map-vals
-    "Maps a function over the values of an associative collection."
-    [f m]
-    (into {} (map (juxt key (comp f val))) m))
-
-  (defn vec-to-id
-    [val]
-    (if (vector? val) (str val) val))
-
-  (map-vals vec-to-id res)
 
   (h/clj-to-str {:db/id :hlle})
   (h/str-to-clj {":db/id" " :hlle" 1 2})
