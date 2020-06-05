@@ -35,6 +35,7 @@ It should also allow connection from localhost:4000 (i.e. a different origin). R
 
 
 # Current status
+- It is still very early work.
 - Transacting works only when you are on the :eavt Datoms view. (I.e. on the view appearing after a query and showing each entity on a specific row, transactions do not work yet.)
 
 - Only query_pull type queries work.
