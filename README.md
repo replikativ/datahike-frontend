@@ -23,10 +23,10 @@ It connects to a Datahike-server instance.
     If you want to use emacs then: cider-jack-in-cljs
     Choose options related to 'shadow'
     You might need to compile the js code here: http://localhost:9630
-    The nrepl is server in port 9000
+    The nrepl is server in listening on port 9000
  
 ## Datahike-server
-You need to start a Datahike server as well (https://https://github.com/replikativ/datahike-server) on the 'admin-endpoitns' branch. 
+You need to start a Datahike server as well (https://github.com/replikativ/datahike-server) on the 'admin-endpoitns' branch. 
 It is expected to listen on port 3000.
 
 # Current status
