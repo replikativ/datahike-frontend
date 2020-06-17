@@ -26,13 +26,8 @@ It connects to a Datahike-server instance.
     The nrepl is server in port 9000
  
 ## Datahike-server
-You need to start a Datahike server as well. 
+You need to start a Datahike server as well (https://https://github.com/replikativ/datahike-server) on the 'admin-endpoitns' branch. 
 It is expected to listen on port 3000.
-It should also allow connection from localhost:4000 (i.e. a different origin). Replace the `wrap-cors` declaration in `server.clj` by the following:
-
-      (wrap-cors :access-control-allow-origin [#"http://localhost" #"http://localhost:8080" #"http://localhost:4000"]
-                 :access-control-allow-methods [:get :put :post :delete])
-
 
 # Current status
 - It is still very early work.
